@@ -27,6 +27,14 @@ video_reader:
   skip_secs : 0 # считываем кадры раз в <skip_secs> секунд
 
 
+detection_node:
+  weight_pth: "weights/yolov8m.pt"
+  classes_to_detect: [2,3,5,7]  # весь транспорт из классов COCO
+  confidence: 0.25  # Порог уверенности детектора (чем больше значение, тем меньше находит)
+  iou: 0.7  # Порог NMS (чем больше значение, тем больше находит)
+  imgsz: 640  # Ресайз при инференсе (640 по умолчанию)
+
+
 show_node:
   scale : 0.7
   fps_counter_N_frames_stat : 15

@@ -9,9 +9,16 @@ class FrameElement:
         timestamp: int,
         frame_num: float,
         frame_result: np.ndarray | None = None,
+        detected_conf: list | None = None,
+        detected_cls: list | None = None,
+        detected_xyxy: list[list] | None = None,
     ) -> None:
         self.source = source  # Путь к видео или номер камеры с которой берем поток
         self.frame = frame  # Кадр bgr формата 
         self.timestamp = timestamp  # Значение времени с начала потока (в секундах)
         self.frame_num = frame_num  # Нормер кадра с потока
         self.frame_result = frame_result  # Итоговый обработанный кадр
+        self.detected_conf = detected_conf  # Список уверенностей задетектированных объектов
+        self.detected_cls = detected_cls  # Список классов задетектированных объектов
+        self.detected_xyxy = detected_xyxy  # Список списков с координатами xyxy боксов
+

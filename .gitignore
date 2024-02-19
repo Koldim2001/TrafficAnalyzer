@@ -2,5 +2,7 @@ __pycache__
 .ipynb_checkpoints
 drafts
 logs
-#**.mp4
+**.mp4
 videos_out
+test_videos
+test.ipynb
