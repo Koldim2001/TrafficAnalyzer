@@ -25,6 +25,13 @@ class ShowNode:
     def process(self, frame_element: FrameElement, fps_counter=None):
 
         frame_result = frame_element.frame.copy()
+
+        # Построение полигонов
+        for road_id, points in frame_element.roads_info.items():
+            points = np.array(points, np.int32)
+            points = points.reshape((-1, 1, 2))
+            cv2.polylines(frame_result, [points], isClosed=True, color=(0, 255, 0), thickness=2)
+
             
         if self.draw_fps_info:
             fps_counter = (

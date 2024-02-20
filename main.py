@@ -17,8 +17,8 @@ def main(config) -> None:
     
     for frame_element in video_reader.process():
         
-        frame_element = show_node.process(frame_element)
         frame_element = detection_node.process(frame_element)
+        frame_element = show_node.process(frame_element)
 
         if save_video:
             video_saver_node.process(frame_element)
