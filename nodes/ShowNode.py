@@ -29,6 +29,19 @@ class ShowNode:
 
         frame_result = frame_element.frame.copy()
 
+        # Отображение результатов детекции:
+        for box, class_name in zip(frame_element.detected_xyxy, frame_element.detected_cls):
+            x1, y1, x2, y2 = box
+            # Отрисовка прямоугольника
+            cv2.rectangle(frame_result, (x1, y1), (x2, y2), (0, 0, 0), 2)
+            # Добавление подписи с именем класса
+            cv2.putText(frame_result, class_name, (x1, y1 - 10),
+                        fontFace=self.fontFace,
+                        fontScale=self.fontScale,
+                        thickness=self.thickness,
+                        color=(0, 0, 255)
+                        )
+
         # Построение полигонов дорог
         if self.show_roi:
             for road_id, points in frame_element.roads_info.items():

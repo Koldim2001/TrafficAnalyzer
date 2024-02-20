@@ -29,7 +29,8 @@ class DetectionNode:
                                      iou=self.iou, classes=self.classes_to_detect)
 
         frame_element.detected_conf = outputs[0].boxes.conf.cpu().tolist()
-        frame_element.detected_cls = outputs[0].boxes.cls.cpu().int().tolist()
+        detected_cls = outputs[0].boxes.cls.cpu().int().tolist()
+        frame_element.detected_cls = [self.classes[i] for i in detected_cls]
         frame_element.detected_xyxy = outputs[0].boxes.xyxy.cpu().int().tolist()
 
         return frame_element
