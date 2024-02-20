@@ -1,3 +1,4 @@
 hydra-core
 ultralytics
 opencv-python
+cython_bbox

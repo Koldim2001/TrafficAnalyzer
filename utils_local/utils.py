@@ -3,7 +3,6 @@ import time
 import numpy as np
 import cv2
 import pandas as pd
-from sklearn.preprocessing import PolynomialFeatures
 
 logger_profile = logging.getLogger("profile")
 

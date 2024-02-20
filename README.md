@@ -1,9 +1,13 @@
 # Анализ трафика на круговом движении
-Установка:
+### Установка:
+Необходима версия Python >= 11
 ```
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
 ```
+### Работа с программой:
+Перед запуском необходимо в файле configs/app_config.yaml указать все желаемые параметры. Далее можно запускать код.
+
 Классический запуск кода:
 ```
 python main.py
