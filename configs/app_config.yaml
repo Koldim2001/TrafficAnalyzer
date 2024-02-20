@@ -25,10 +25,11 @@ pipeline:
 video_reader:
   src: test_videos/test_video.mp4 # путь до файла обработки или номер камеры
   skip_secs : 0 # считываем кадры раз в <skip_secs> секунд
+  roads_info: configs/entry_exit_lanes.json # json файл с координатами дорог на видео
 
 
 detection_node:
-  weight_pth: "weights/yolov8m.pt"
+  weight_pth: weights/yolov8m.pt
   classes_to_detect: [2,3,5,7]  # весь транспорт из классов COCO
   confidence: 0.25  # Порог уверенности детектора (чем больше значение, тем меньше находит)
   iou: 0.7  # Порог NMS (чем больше значение, тем больше находит)
@@ -36,9 +37,9 @@ detection_node:
 
 
 show_node:
-  scale : 0.7
-  fps_counter_N_frames_stat : 15
-  draw_fps_info : True
+  scale : 0.7  # Масштабирование итогового окна результатов при imshow=True
+  fps_counter_N_frames_stat : 15  # Окно усредения fsp счетчика
+  draw_fps_info : True  # Указывать ли fps обработки
   show_roi: True  # Показывать ли регионы примыкающих дорог 
   graph_pose: right # Где результаты расположить снизу или справа (down, right)
   imshow: True  # Нужно ли выводить видео в процессе обработки
@@ -46,5 +47,5 @@ show_node:
 
 video_saver_node:
   fps : 30  # при увеличении позволяет ускорить итоговое видео
-  out_folder : videos_out
+  out_folder : test_videos/videos_out  # в какую папку сохранить результат
 

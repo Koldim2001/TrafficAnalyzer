@@ -3,6 +3,8 @@ import os
 import time
 from elements.FrameElement import FrameElement
 import logging
+import json
+
 
 from typing import Generator
 
@@ -28,6 +30,14 @@ class VideoReader:
 
         self.skip_secs = config["skip_secs"]
         self.last_frame_timestamp = 0
+
+        # Чтение данных из файла JSON (информация о координатах въезда и выезда дорог)
+        with open(config["roads_info"], 'r') as file:
+            data_json = json.load(file)
+
+        # Преобразование данных координат дорог в формат int
+        self.roads_info = {key: [int(value) for value in values] for key, values in data_json.items()}
+
 
     def process(self) -> Generator[FrameElement, None, None]:
         # номер кадра текущего видео
@@ -57,4 +67,4 @@ class VideoReader:
 
             frame_number += 1
 
-            yield FrameElement(self.video_source, frame, timestamp, frame_number)
+            yield FrameElement(self.video_source, frame, timestamp, frame_number, self.roads_info)
