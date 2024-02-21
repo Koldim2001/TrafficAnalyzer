@@ -1,4 +1,5 @@
 import cv2
+import random
 import numpy as np
 from utils_local.utils import profile_time, FPS_Counter
 
@@ -17,9 +18,10 @@ class ShowNode:
         self.draw_fps_info = config_show_node["draw_fps_info"]
         self.show_roi = config_show_node["show_roi"]
         self.overlay_transparent_mask = config_show_node["overlay_transparent_mask"]
-        self.graph_pose = config_show_node["graph_pose"]
         self.imshow = config_show_node["imshow"]
-        self.show_yolo_detections = False
+        self.show_only_yolo_detections = config_show_node["show_only_yolo_detections"]
+        self.show_track_id_different_colors = config_show_node["show_track_id_different_colors"]
+        # self.graph_pose = config_show_node["graph_pose"]
 
         self.fontFace = 1
         self.fontScale = 2.0
@@ -31,7 +33,7 @@ class ShowNode:
         frame_result = frame_element.frame.copy()
 
         # Отображение результатов детекции:
-        if self.show_yolo_detections:
+        if self.show_only_yolo_detections:
             for box, class_name in zip(frame_element.detected_xyxy, frame_element.detected_cls):
                 x1, y1, x2, y2 = box
                 # Отрисовка прямоугольника
@@ -51,7 +53,12 @@ class ShowNode:
                                        frame_element.id_list):
                 x1, y1, x2, y2 = box
                 # Отрисовка прямоугольника
-                cv2.rectangle(frame_result, (x1, y1), (x2, y2), (50, 25, 50), 2)
+                color = (50, 25, 50)
+                if self.show_track_id_different_colors:
+                    # Отображаем каждый трек своим цветом
+                    random.seed(int(id))
+                    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                cv2.rectangle(frame_result, (x1, y1), (x2, y2), color, 2)
                 # Добавление подписи с именем класса
                 cv2.putText(frame_result, f'{class_name} {id}', (x1, y1 - 10),
                             fontFace=self.fontFace,
