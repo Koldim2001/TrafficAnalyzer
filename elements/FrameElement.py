@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class FrameElement:
     def __init__(
         self,

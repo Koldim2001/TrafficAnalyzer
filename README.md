@@ -21,3 +21,9 @@ python main.py hydra.job_logging.root.level=DEBUG
 ```
 python main.py --config-name=app_config
 ```
+---
+Пример трекинга машин:
+<div style="text-align:center;">
+  <img src="https://drive.google.com/uc?id=1sWUeXPFcCnJXvxWBcmvjfuSdqGh_KZkQ" alt="bot" width="800" height="516">
+</div>
+

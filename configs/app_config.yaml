@@ -55,7 +55,7 @@ show_node:
   fps_counter_N_frames_stat : 15  # Окно усредения fsp счетчика
   draw_fps_info : True  # Указывать ли fps обработки
   show_roi: True  # Показывать ли регионы примыкающих дорог 
-  overlay_transparent_mask: True # Заливка регионов при show_roi=True (медленная операция)
+  overlay_transparent_mask: False # Заливка регионов при show_roi=True (медленная операция)
   show_only_yolo_detections : False  # Отображать лишь результаты детекции без учета трекинга и прочей логики кода
   show_track_id_different_colors: True  # Отображать цвет бокса согласно id трека, а не логике прибытия объекта
   # graph_pose: right # Где расположить снизу или справа результирующее окно обработчика трафика (down, right)

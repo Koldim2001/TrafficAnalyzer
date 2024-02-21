@@ -23,6 +23,9 @@ class ShowNode:
         self.show_track_id_different_colors = config_show_node["show_track_id_different_colors"]
         # self.graph_pose = config_show_node["graph_pose"]
 
+        self.show_number_of_road = True  # отображение номера дороги 
+
+        # Параметры для шрифтов:
         self.fontFace = 1
         self.fontScale = 2.0
         self.thickness = 2
@@ -32,7 +35,7 @@ class ShowNode:
 
         frame_result = frame_element.frame.copy()
 
-        # Отображение результатов детекции:
+        # Отображение лишь результатов детекции:
         if self.show_only_yolo_detections:
             for box, class_name in zip(frame_element.detected_xyxy, frame_element.detected_cls):
                 x1, y1, x2, y2 = box
@@ -74,10 +77,43 @@ class ShowNode:
                 points = np.array(points, np.int32)
                 points = points.reshape((-1, 1, 2))
                 cv2.polylines(frame_result, [points], isClosed=True, color=color, thickness=2)
+
                 if self.overlay_transparent_mask:
                     frame_result = self._overlay_transparent_mask(frame_result, points,
-                                                                  mask_color=color, alpha=0.5)
-                
+                                                                  mask_color=color, alpha=0.3)
+
+                # Отображение номера дороги в залитой окружности
+                if self.show_number_of_road:
+                    moments = cv2.moments(points)  # Найти центр области
+                    if moments["m00"] != 0:
+                        cx = int(moments["m10"] / moments["m00"])
+                        cy = int(moments["m01"] / moments["m00"])
+
+                        (label_width, label_height), _ = cv2.getTextSize(
+                            str(road_id),
+                            fontFace=self.fontFace,
+                            fontScale=self.fontScale * 1.3,
+                            thickness=self.thickness,
+                        )
+                        # Определение размеров круга
+                        circle_radius = max(label_width, label_height) // 2
+                        # Рисование круга
+                        cv2.circle(
+                            frame_result,
+                            (cx, cy),
+                            circle_radius + 6,  # Добавляем небольшой отступ для текста
+                            (200, 200, 200),
+                            -1
+                        )
+                        # Нанесение подписи road_id в центре области
+                        cv2.putText(frame_result, str(road_id),
+                                    (cx + 2 - label_width // 2, cy + 2  + label_height // 2),
+                                    fontFace=self.fontFace,
+                                    fontScale=self.fontScale * 1.3,
+                                    thickness=self.thickness,
+                                    color=(0,0,0)
+                                    )
+                        
         # Подсчет fps и отрисовка   
         if self.draw_fps_info:  
             fps_counter = (
@@ -92,8 +128,7 @@ class ShowNode:
                 fontScale=self.fontScale,
                 thickness=self.thickness,
             )
-
-            frame = cv2.rectangle(
+            cv2.rectangle(
                 frame_result, (0, 0), (10 + label_width, 35 + label_height), (0, 0, 0), -1
             )
             cv2.putText(
