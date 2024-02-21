@@ -19,6 +19,7 @@ class ShowNode:
         self.overlay_transparent_mask = config_show_node["overlay_transparent_mask"]
         self.graph_pose = config_show_node["graph_pose"]
         self.imshow = config_show_node["imshow"]
+        self.show_yolo_detections = False
 
         self.fontFace = 1
         self.fontScale = 2.0
@@ -30,17 +31,34 @@ class ShowNode:
         frame_result = frame_element.frame.copy()
 
         # Отображение результатов детекции:
-        for box, class_name in zip(frame_element.detected_xyxy, frame_element.detected_cls):
-            x1, y1, x2, y2 = box
-            # Отрисовка прямоугольника
-            cv2.rectangle(frame_result, (x1, y1), (x2, y2), (0, 0, 0), 2)
-            # Добавление подписи с именем класса
-            cv2.putText(frame_result, class_name, (x1, y1 - 10),
-                        fontFace=self.fontFace,
-                        fontScale=self.fontScale,
-                        thickness=self.thickness,
-                        color=(0, 0, 255)
-                        )
+        if self.show_yolo_detections:
+            for box, class_name in zip(frame_element.detected_xyxy, frame_element.detected_cls):
+                x1, y1, x2, y2 = box
+                # Отрисовка прямоугольника
+                cv2.rectangle(frame_result, (x1, y1), (x2, y2), (0, 0, 0), 2)
+                # Добавление подписи с именем класса
+                cv2.putText(frame_result, class_name, (x1, y1 - 10),
+                            fontFace=self.fontFace,
+                            fontScale=self.fontScale,
+                            thickness=self.thickness,
+                            color=(0, 0, 255)
+                            )
+
+        else:
+            # Отображение результатов трекинга:
+            for box, class_name, id in zip(frame_element.tracked_xyxy,
+                                       frame_element.tracked_cls,
+                                       frame_element.id_list):
+                x1, y1, x2, y2 = box
+                # Отрисовка прямоугольника
+                cv2.rectangle(frame_result, (x1, y1), (x2, y2), (50, 25, 50), 2)
+                # Добавление подписи с именем класса
+                cv2.putText(frame_result, f'{class_name} {id}', (x1, y1 - 10),
+                            fontFace=self.fontFace,
+                            fontScale=self.fontScale,
+                            thickness=self.thickness,
+                            color=(0, 0, 255)
+                            )
 
         # Построение полигонов дорог
         if self.show_roi:

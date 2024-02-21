@@ -57,10 +57,10 @@ class DetectionTrackingNodes:
         track_list = self.tracker.update(torch.tensor(detections_list), xyxy=True)
 
         # Получение id list
-        frame_element.id_list = [t.track_id for t in track_list]
+        frame_element.id_list = [int(t.track_id) for t in track_list]
 
         # Получение box list
-        frame_element.tracked_xyxy = [t.tlbr for t in track_list]
+        frame_element.tracked_xyxy = [list(t.tlbr.astype(int)) for t in track_list]
 
         # Получение object class names
         frame_element.tracked_cls = [self.classes[int(t.class_name)] for t in track_list]
@@ -86,7 +86,7 @@ class DetectionTrackingNodes:
                 bbox = result.boxes.xyxy.cpu().numpy()
                 confidence = result.boxes.conf.cpu().numpy()
 
-                class_id_value = 1 # Будем все трекуемые объекты считать классом car чтобы не было ошибок
+                class_id_value = 2 # Будем все трекуемые объекты считать классом car чтобы не было ошибок
                 
                 merged_detection = [bbox[0][0], bbox[0][1], bbox[0][2], bbox[0][3], confidence[0], class_id_value]
                 
