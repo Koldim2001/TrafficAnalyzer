@@ -16,6 +16,7 @@ class FrameElement:
         tracked_conf: list | None = None,
         tracked_cls: list | None = None,
         tracked_xyxy: list[list] | None = None,
+        id_list: list | None = None,
     ) -> None:
         self.source = source  # Путь к видео или номер камеры с которой берем поток
         self.frame = frame  # Кадр bgr формата 
@@ -30,5 +31,6 @@ class FrameElement:
         # Результаты корректировки трекинг алгоритмом:
         self.tracked_conf = tracked_conf  # Список уверенностей задетектированных объектов
         self.tracked_cls = tracked_cls  # Список классов задетектированных объектов
-        self.tracked_xyxy = tracked_xyxy  # Список списков с координатами xyxy боксов       
+        self.tracked_xyxy = tracked_xyxy  # Список списков с координатами xyxy боксов    
+        self.id_list = id_list  # Список обнаруженных id трекуемых объектов
 

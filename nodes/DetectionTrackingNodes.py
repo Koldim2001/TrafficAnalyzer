@@ -47,5 +47,49 @@ class DetectionTrackingNodes:
         frame_element.detected_cls = [self.classes[i] for i in detected_cls]
         frame_element.detected_xyxy = outputs[0].boxes.xyxy.cpu().int().tolist()
 
+        # Преподготовка данных на подачу в трекер
+        detections_list = self._get_results_dor_tracker(outputs)
+
+        # Если детекций нет, то оправляем пустой массив
+        if len(detections_list) == 0:
+            detections_list = np.empty((0, 6))
+
+        track_list = self.tracker.update(torch.tensor(detections_list), xyxy=True)
+
+        # Получение id list
+        frame_element.id_list = [t.track_id for t in track_list]
+
+        # Получение box list
+        frame_element.tracked_xyxy = [t.tlbr for t in track_list]
+
+        # Получение object class names
+        frame_element.tracked_cls = [self.classes[int(t.class_name)] for t in track_list]
+
+        # Получение conf scores
+        frame_element.tracked_conf = [t.score for t in track_list]
+
+        # Получение числа видимых в данном кадре треков
+        num_objects = len(frame_element.id_list)
+
         return frame_element
 
+
+
+    def _get_results_dor_tracker(self, results):
+        # Приведение данных в правильную форму для трекера
+        detections_list = []
+        for result in results[0]:
+            class_id = result.boxes.cls.cpu().numpy().astype(int)
+            # трекаем те же классы что и детектируем
+            if class_id[0] in self.classes_to_detect:
+                    
+                bbox = result.boxes.xyxy.cpu().numpy()
+                confidence = result.boxes.conf.cpu().numpy()
+
+                class_id_value = 1 # Будем все трекуемые объекты считать классом car чтобы не было ошибок
+                
+                merged_detection = [bbox[0][0], bbox[0][1], bbox[0][2], bbox[0][3], confidence[0], class_id_value]
+                
+                detections_list.append(merged_detection)
+    
+        return np.array(detections_list)
