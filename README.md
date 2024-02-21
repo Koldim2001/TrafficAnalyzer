@@ -23,7 +23,6 @@ python main.py --config-name=app_config
 ```
 ---
 Пример трекинга машин:
-<div style="text-align:center;">
-  <img src="https://drive.google.com/uc?id=1sWUeXPFcCnJXvxWBcmvjfuSdqGh_KZkQ" alt="bot" width="800" height="516">
-</div>
+
+![Traffic Tracking](content_for_readme/traffic_tracking.gif)
 
