@@ -6,19 +6,33 @@ from utils_local.utils import profile_time
 from collections import deque
 
 from elements.FrameElement import FrameElement
+from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
 
 
-class DetectionNode:
+
+class DetectionTrackingNodes:
     def __init__(self, config) -> None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f'Детекция будет производиться на {device}')
-        self.model = YOLO(config["weight_pth"])
+
+        config_yolo = config["detection_node"]
+        self.model = YOLO(config_yolo["weight_pth"])
         self.model.fuse()
         self.classes = self.model.names
-        self.conf = config["confidence"]
-        self.iou = config["iou"]
-        self.imgsz = config["imgsz"]
-        self.classes_to_detect = config["classes_to_detect"]
+        self.conf = config_yolo["confidence"]
+        self.iou = config_yolo["iou"]
+        self.imgsz = config_yolo["imgsz"]
+        self.classes_to_detect = config_yolo["classes_to_detect"]
+
+        config_bytetrack= config["tracking_node"]
+
+        # ByteTrack param
+        first_track_thresh = config_bytetrack["first_track_thresh"]
+        second_track_thresh = config_bytetrack["second_track_thresh"]
+        match_thresh = config_bytetrack["match_thresh"]
+        track_buffer = config_bytetrack["track_buffer"]
+        fps = 30  # ставим равным 30 чтобы track_buffer мерился в кадрах
+        self.tracker = ByteTracker(fps, first_track_thresh, second_track_thresh, match_thresh, track_buffer, 1)
 
 
     @profile_time
