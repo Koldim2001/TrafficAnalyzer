@@ -1,5 +1,5 @@
 hydra-core
 ultralytics
 opencv-python
-cython_bbox
 lap
+cython_bbox
