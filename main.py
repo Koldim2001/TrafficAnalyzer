@@ -3,6 +3,7 @@ from nodes.VideoReader import VideoReader
 from nodes.ShowNode import ShowNode
 from nodes.VideoSaverNode import VideoSaverNode
 from nodes.DetectionTrackingNodes import DetectionTrackingNodes
+from nodes.TrackerInfoUpdateNode import TrackerInfoUpdateNode
 
 
 
@@ -10,6 +11,7 @@ from nodes.DetectionTrackingNodes import DetectionTrackingNodes
 def main(config) -> None:
     video_reader = VideoReader(config["video_reader"])
     detection_node = DetectionTrackingNodes(config)
+    tracker_info_update_node = TrackerInfoUpdateNode(config)
     show_node = ShowNode(config)
     video_saver_node = VideoSaverNode(config["video_saver_node"])
 
@@ -18,6 +20,7 @@ def main(config) -> None:
     for frame_element in video_reader.process():
         
         frame_element = detection_node.process(frame_element)
+        frame_element = tracker_info_update_node.process(frame_element)
         frame_element = show_node.process(frame_element)
 
         if save_video:

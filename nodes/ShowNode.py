@@ -31,7 +31,7 @@ class ShowNode:
         self.thickness = 2
 
     @profile_time
-    def process(self, frame_element: FrameElement, fps_counter=None):
+    def process(self, frame_element: FrameElement, fps_counter=None) -> FrameElement:
 
         frame_result = frame_element.frame.copy()
 

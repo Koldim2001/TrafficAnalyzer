@@ -36,7 +36,7 @@ class DetectionTrackingNodes:
 
 
     @profile_time
-    def process(self, frame_element: FrameElement):
+    def process(self, frame_element: FrameElement) -> FrameElement:
         frame = frame_element.frame.copy()
 
         outputs = self.model.predict(frame, imgsz=self.imgsz, conf=self.conf, verbose=False,
@@ -75,7 +75,7 @@ class DetectionTrackingNodes:
 
 
 
-    def _get_results_dor_tracker(self, results):
+    def _get_results_dor_tracker(self, results) -> np.ndarray:
         # Приведение данных в правильную форму для трекера
         detections_list = []
         for result in results[0]:
