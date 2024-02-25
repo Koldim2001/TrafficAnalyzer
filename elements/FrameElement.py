@@ -1,11 +1,12 @@
 import numpy as np
 
 class FrameElement:
+    # Класс, содержаций информацию о конкретном кадре видеопотока
     def __init__(
         self,
         source: str,
         frame: np.ndarray,
-        timestamp: int,
+        timestamp: float,
         frame_num: float,
         roads_info: dict,
         frame_result: np.ndarray | None = None,
@@ -23,7 +24,7 @@ class FrameElement:
         self.frame_num = frame_num  # Нормер кадра с потока
         self.roads_info = roads_info  # Словарь с координатми дорог, примыкающих к участку кругового движения
         self.frame_result = frame_result  # Итоговый обработанный кадр
-        # Результаты на входе YOLO:
+        # Результаты на выходе с YOLO:
         self.detected_conf = detected_conf  # Список уверенностей задетектированных объектов
         self.detected_cls = detected_cls  # Список классов задетектированных объектов
         self.detected_xyxy = detected_xyxy  # Список списков с координатами xyxy боксов
