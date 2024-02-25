@@ -56,11 +56,18 @@ class ShowNode:
                                        frame_element.id_list):
                 x1, y1, x2, y2 = box
                 # Отрисовка прямоугольника
-                color = (50, 25, 50)
                 if self.show_track_id_different_colors:
                     # Отображаем каждый трек своим цветом
                     random.seed(int(id))
                     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                else:
+                    # Отображаем каждый трек согласно цвету пересечения с дорогой
+                    start_road = frame_element.buffer_tracks[int(id)].start_road
+                    if start_road is not None:
+                        color = self.colors_roads[int(start_road)]
+                    else:
+                        color = (50, 25, 50)
+
                 cv2.rectangle(frame_result, (x1, y1), (x2, y2), color, 2)
                 # Добавление подписи с именем класса
                 cv2.putText(frame_result, f'{class_name} {id}', (x1, y1 - 10),
