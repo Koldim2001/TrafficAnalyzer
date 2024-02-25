@@ -1,13 +1,10 @@
 from ultralytics import YOLO
-import cv2
 import torch
 import numpy as np
 from utils_local.utils import profile_time
-from collections import deque
 
 from elements.FrameElement import FrameElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
-
 
 
 class DetectionTrackingNodes:
@@ -68,11 +65,7 @@ class DetectionTrackingNodes:
         # Получение conf scores
         frame_element.tracked_conf = [t.score for t in track_list]
 
-        # Получение числа видимых в данном кадре треков
-        num_objects = len(frame_element.id_list)
-
         return frame_element
-
 
 
     def _get_results_dor_tracker(self, results) -> np.ndarray:

@@ -62,11 +62,14 @@ class ShowNode:
                     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
                 else:
                     # Отображаем каждый трек согласно цвету пересечения с дорогой
-                    start_road = frame_element.buffer_tracks[int(id)].start_road
-                    if start_road is not None:
-                        color = self.colors_roads[int(start_road)]
-                    else:
-                        color = (50, 25, 50)
+                    try:
+                        start_road = frame_element.buffer_tracks[int(id)].start_road
+                        if start_road is not None:
+                            color = self.colors_roads[int(start_road)]
+                        else:  # бокс черным цветом если еще нет информации о стартовой дороге
+                            color = (0, 0, 0)
+                    except KeyError:  # На случай если машина еще в кадре а трек уже удален
+                        color = (0, 0, 0)
 
                 cv2.rectangle(frame_result, (x1, y1), (x2, y2), color, 2)
                 # Добавление подписи с именем класса

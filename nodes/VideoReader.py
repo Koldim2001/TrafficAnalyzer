@@ -60,7 +60,7 @@ class VideoReader:
                 if timestamp > self.last_frame_timestamp
                 else self.last_frame_timestamp + 0.1
             )
-            
+
             if abs(self.last_frame_timestamp - timestamp) < self.skip_secs:
                 continue
             self.last_frame_timestamp = timestamp

@@ -1,7 +1,9 @@
 from elements.FrameElement import FrameElement
 from elements.TrackElement import TrackElement
 from utils_local.utils import profile_time, intersects_central_point
+import logging
 
+logger = logging.getLogger("buffer_tracks")
 
 class TrackerInfoUpdateNode:
     """Модуль обновления актуальных треков"""
@@ -50,7 +52,9 @@ class TrackerInfoUpdateNode:
 
         for key in keys_to_remove:
             self.buffer_tracks.pop(key)  # Удаляем элемент из словаря
-            print(f"Removed tracker with key {key}")
+            logger.info(
+            f"Removed tracker with key {key}"
+        )
 
         # Запись результатов обработки:
         frame_element.buffer_tracks = self.buffer_tracks
