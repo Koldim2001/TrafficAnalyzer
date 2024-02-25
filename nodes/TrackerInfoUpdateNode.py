@@ -1,8 +1,6 @@
-import cv2
 from elements.FrameElement import FrameElement
 from elements.TrackElement import TrackElement
 from utils_local.utils import profile_time, intersects_central_point
-import numpy as np
 
 
 class TrackerInfoUpdateNode:
@@ -36,7 +34,25 @@ class TrackerInfoUpdateNode:
                     tracked_xyxy=frame_element.tracked_xyxy[i],
                     polygons=frame_element.roads_info,
                 )
+                # Проверка того, что отработка функции дала наконец-то актуальный номер дороги:
+                if self.buffer_tracks[id].start_road is not None:
+                    # Тогда сохраняем время такого момента:
+                    self.buffer_tracks[id].timestamp_init_road = frame_element.timestamp
         
+
+        # Удаление старых айдишников из словаря если их время жизни > size_buffer_analytics
+        keys_to_remove = []
+        for key, track_element in sorted(self.buffer_tracks.items()):  # Сортируем элементы по ключу
+            if frame_element.timestamp - track_element.timestamp_first < self.size_buffer_analytics:
+                break  # Прерываем цикл, если значение time_delta больше check
+            else:
+                keys_to_remove.append(key)  # Добавляем ключ для удаления
+
+        for key in keys_to_remove:
+            self.buffer_tracks.pop(key)  # Удаляем элемент из словаря
+            print(f"Removed tracker with key {key}")
+
+        # Запись результатов обработки:
         frame_element.buffer_tracks = self.buffer_tracks
 
         return frame_element

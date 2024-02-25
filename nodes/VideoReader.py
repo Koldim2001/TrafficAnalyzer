@@ -29,7 +29,7 @@ class VideoReader:
             self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
         self.skip_secs = config["skip_secs"]
-        self.last_frame_timestamp = 0
+        self.last_frame_timestamp = -1  # специально отрицательное при инициализации (костыль)
 
         # Чтение данных из файла JSON (информация о координатах въезда и выезда дорог)
         with open(config["roads_info"], 'r') as file:
@@ -60,7 +60,7 @@ class VideoReader:
                 if timestamp > self.last_frame_timestamp
                 else self.last_frame_timestamp + 0.1
             )
-
+            
             if abs(self.last_frame_timestamp - timestamp) < self.skip_secs:
                 continue
             self.last_frame_timestamp = timestamp
