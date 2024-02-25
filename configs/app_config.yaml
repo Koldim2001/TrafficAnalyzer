@@ -58,7 +58,6 @@ show_node:
   overlay_transparent_mask: True # Заливка регионов при show_roi=True (медленная операция)
   show_only_yolo_detections : False  # Отображать лишь результаты детекции без учета трекинга и прочей логики кода
   show_track_id_different_colors: True  # Отображать цвет бокса согласно id трека, а не логике прибытия объекта
-  # graph_pose: right # Где расположить снизу или справа результирующее окно обработчика трафика (down, right)
 
 
 video_saver_node:
