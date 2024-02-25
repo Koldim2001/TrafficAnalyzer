@@ -5,9 +5,7 @@ from elements.FrameElement import FrameElement
 import numpy as np
 import logging
 
-
 logger = logging.getLogger(__name__)
-
 
 class VideoSaverNode:
     """Модуль для сохранения видеопотока"""

@@ -6,7 +6,6 @@ from nodes.DetectionTrackingNodes import DetectionTrackingNodes
 from nodes.TrackerInfoUpdateNode import TrackerInfoUpdateNode
 
 
-
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
 def main(config) -> None:
     video_reader = VideoReader(config["video_reader"])

@@ -30,6 +30,9 @@ class ShowNode:
         self.fontScale = 2.0
         self.thickness = 2
 
+        # Параметры для полигонов и bboxes:
+        self.thickness_lines = 2
+
     @profile_time
     def process(self, frame_element: FrameElement, fps_counter=None) -> FrameElement:
 
@@ -71,9 +74,9 @@ class ShowNode:
                     except KeyError:  # На случай если машина еще в кадре а трек уже удален
                         color = (0, 0, 0)
 
-                cv2.rectangle(frame_result, (x1, y1), (x2, y2), color, 2)
+                cv2.rectangle(frame_result, (x1, y1), (x2, y2), color, self.thickness_lines)
                 # Добавление подписи с именем класса
-                cv2.putText(frame_result, f'{class_name} {id}', (x1, y1 - 10),
+                cv2.putText(frame_result, f'{id}', (x1, y1 - 10),
                             fontFace=self.fontFace,
                             fontScale=self.fontScale,
                             thickness=self.thickness,
@@ -86,7 +89,8 @@ class ShowNode:
                 color = self.colors_roads[int(road_id)]
                 points = np.array(points, np.int32)
                 points = points.reshape((-1, 1, 2))
-                cv2.polylines(frame_result, [points], isClosed=True, color=color, thickness=2)
+                cv2.polylines(frame_result, [points], isClosed=True,
+                              color=color, thickness=self.thickness_lines)
 
                 if self.overlay_transparent_mask:
                     frame_result = self._overlay_transparent_mask(frame_result, points,
