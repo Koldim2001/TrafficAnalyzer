@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 class FrameElement:
     # Класс, содержаций информацию о конкретном кадре видеопотока
@@ -25,6 +26,7 @@ class FrameElement:
         self.frame_num = frame_num  # Нормер кадра с потока
         self.roads_info = roads_info  # Словарь с координатми дорог, примыкающих к участку кругового движения
         self.frame_result = frame_result  # Итоговый обработанный кадр
+        self.timestamp_date = time.time()  # Время в момент обработки кадра unix формат (в секундах)
         # Результаты на выходе с YOLO:
         self.detected_conf = detected_conf  # Список уверенностей задетектированных объектов
         self.detected_cls = detected_cls  # Список классов задетектированных объектов

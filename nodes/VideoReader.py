@@ -26,15 +26,12 @@ class VideoReader:
         self.last_frame_timestamp = -1  # специально отрицательное при инициализации (костыль)
         self.first_timestamp = 0  # Значение времени в момент первого кадра потока
         
-        # В конце обработки будем вместо FrameElement отправлять VideoEndBreakElement по которому будем 
-        # реализовывать прерывание всех запущенных процессов в случае работы с main_optimized.py:
         self.break_element_sent = False  # Был ли отправлен элемент прерывания видеопотока
 
         # устанавливаем ширину и высоту при обработке с видео-камеры (на входе int значение номера камеры)
         if type(self.video_pth) == int:
             self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
             self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)          
-            self.last_frame_timestamp = time.time()
 
         # Чтение данных из файла JSON (информация о координатах въезда и выезда дорог)
         with open(config["roads_info"], 'r') as file:
@@ -53,6 +50,7 @@ class VideoReader:
                 logger.warning("Can't receive frame (stream end?). Exiting ...")
                 if not self.break_element_sent:
                     self.break_element_sent = True
+                    # отправим VideoEndBreakElement чтобы обозначить окончание потока
                     yield VideoEndBreakElement(self.video_pth, self.last_frame_timestamp)
                 break
 
@@ -61,22 +59,21 @@ class VideoReader:
                 # с камеры:
                 if frame_number == 0:
                     self.first_timestamp = time.time()
-                    timestamp = 0
-                else:
-                    timestamp = time.time() - self.first_timestamp
+                timestamp = time.time() - self.first_timestamp
             else:
                 # с видео:
                 timestamp = self.stream.get(cv2.CAP_PROP_POS_MSEC) / 1000
 
-                # делаем костыль, чтобы не было 0-вых тайстампов под конец стрима, баг опенсв
+                # делаем костыль, чтобы не было 0-вых тайстампов под конец стрима, баг cv2
                 timestamp = (
                     timestamp
                     if timestamp > self.last_frame_timestamp
                     else self.last_frame_timestamp + 0.1
                 )
 
+            # Пропустим некоторые кадры если требуется согласно конфигу
             if abs(self.last_frame_timestamp - timestamp) < self.skip_secs:
-                continue  # Пропустим некоторые кадры если требуется согласно конфигу
+                continue  
         
             self.last_frame_timestamp = timestamp
 
