@@ -4,6 +4,7 @@ import logging
 import cv2
 
 from elements.FrameElement import FrameElement
+from elements.VideoEndBreakElement import VideoEndBreakElement
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,13 @@ class VideoSaverNode:
         self._cv2_writer = None
 
     def process(self, frame_element: FrameElement) -> None:
+        # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
+        if isinstance(frame_element, VideoEndBreakElement):
+            print(f"Видео сохранено в папке {self.out_folder}")
+            return 
+        assert isinstance(
+            frame_element, FrameElement
+        ), f"VideoSaverNode | Неправильный формат входного элемента {type(frame_element)}"
 
         source = frame_element.source
         frame = frame_element.frame_result

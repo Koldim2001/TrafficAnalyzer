@@ -2,6 +2,7 @@ from collections import deque
 import numpy as np
 
 from elements.FrameElement import FrameElement
+from elements.VideoEndBreakElement import VideoEndBreakElement
 from utils_local.utils import profile_time
 
 class CalcStatisticsNode:
@@ -17,6 +18,14 @@ class CalcStatisticsNode:
           
     @profile_time 
     def process(self, frame_element: FrameElement) -> FrameElement:
+        # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
+        if isinstance(frame_element, VideoEndBreakElement):
+            return frame_element
+        assert isinstance(
+            frame_element, FrameElement
+        ), f"CalcStatisticsNode | Неправильный формат входного элемента {type(frame_element)}"
+
+
         buffer_tracks = frame_element.buffer_tracks
         self.cars_buffer.append(len(frame_element.id_list))
 

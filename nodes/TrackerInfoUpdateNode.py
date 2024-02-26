@@ -2,6 +2,7 @@ import logging
 
 from elements.FrameElement import FrameElement
 from elements.TrackElement import TrackElement
+from elements.VideoEndBreakElement import VideoEndBreakElement
 from utils_local.utils import profile_time, intersects_central_point
 
 logger = logging.getLogger("buffer_tracks")
@@ -19,6 +20,13 @@ class TrackerInfoUpdateNode:
 
     @profile_time 
     def process(self, frame_element: FrameElement) -> FrameElement:
+        # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
+        if isinstance(frame_element, VideoEndBreakElement):
+            return frame_element
+        assert isinstance(
+            frame_element, FrameElement
+        ), f"TrackerInfoUpdateNode | Неправильный формат входного элемента {type(frame_element)}"
+
         id_list = frame_element.id_list
 
         for i, id in enumerate(id_list):

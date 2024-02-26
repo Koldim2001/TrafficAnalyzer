@@ -10,6 +10,8 @@ from nodes.DetectionTrackingNodes import DetectionTrackingNodes
 from nodes.TrackerInfoUpdateNode import TrackerInfoUpdateNode
 from nodes.CalcStatisticsNode import CalcStatisticsNode
 
+from elements.VideoEndBreakElement import VideoEndBreakElement
+
 PRINT_PROFILE_INFO = False
 
 
@@ -30,6 +32,8 @@ def proc_frame_reader_and_detection(queue_out: Queue, config: dict, time_sleep_s
                 + f"detection_node {(ts1-ts0) * 1000:.0f} | "
                 + f"put {(time()-ts1) * 1000:.0f}"
             )
+        if isinstance(frame_element, VideoEndBreakElement):
+            break
 
 
 def proc_tracker_update_and_calc(queue_in: Queue, queue_out: Queue, config: dict):
@@ -50,6 +54,8 @@ def proc_tracker_update_and_calc(queue_in: Queue, queue_out: Queue, config: dict
                 + f"nodes_inference {(ts2-ts1) * 1000:.0f} | "
                 + f"put {(time()-ts2) * 1000:.0f}"
             )
+        if isinstance(frame_element, VideoEndBreakElement):
+            break
 
 
 def proc_show_node(queue_in: Queue, config: dict):
@@ -71,7 +77,8 @@ def proc_show_node(queue_in: Queue, config: dict):
                 + f"show_node {(ts2-ts1) * 1000:.0f} | "
                 + f"put {(time()-ts2) * 1000:.0f}"
             )
-
+        if isinstance(frame_element, VideoEndBreakElement):
+            break
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
