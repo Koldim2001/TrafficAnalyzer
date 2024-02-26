@@ -36,7 +36,6 @@ class VideoReader:
         # Преобразование данных координат дорог в формат int
         self.roads_info = {key: [int(value) for value in values] for key, values in data_json.items()}
 
-
     def process(self) -> Generator[FrameElement, None, None]:
         # номер кадра текущего видео
         frame_number = 0

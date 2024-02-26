@@ -32,7 +32,6 @@ class DetectionTrackingNodes:
         fps = 30  # ставим равным 30 чтобы track_buffer мерился в кадрах
         self.tracker = ByteTracker(fps, first_track_thresh, second_track_thresh, match_thresh, track_buffer, 1)
 
-
     @profile_time
     def process(self, frame_element: FrameElement) -> FrameElement:
         frame = frame_element.frame.copy()
@@ -67,7 +66,6 @@ class DetectionTrackingNodes:
         frame_element.tracked_conf = [t.score for t in track_list]
 
         return frame_element
-
 
     def _get_results_dor_tracker(self, results) -> np.ndarray:
         # Приведение данных в правильную форму для трекера

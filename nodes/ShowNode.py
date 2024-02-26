@@ -165,7 +165,6 @@ class ShowNode:
         
         return frame_element
 
-    
     def _overlay_transparent_mask(self, img, points, mask_color=(0, 255, 255), alpha=0.3):
         binary_mask = np.zeros((img.shape[0], img.shape[1]), dtype=np.uint8)
         binary_mask = cv2.fillPoly(binary_mask, pts=[points], color=1)

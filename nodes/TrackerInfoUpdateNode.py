@@ -44,7 +44,6 @@ class TrackerInfoUpdateNode:
                     # Тогда сохраняем время такого момента:
                     self.buffer_tracks[id].timestamp_init_road = frame_element.timestamp
         
-
         # Удаление старых айдишников из словаря если их время жизни > size_buffer_analytics
         keys_to_remove = []
         for key, track_element in sorted(self.buffer_tracks.items()):  # Сортируем элементы по ключу

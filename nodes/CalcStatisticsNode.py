@@ -5,7 +5,6 @@ from elements.FrameElement import FrameElement
 from elements.TrackElement import TrackElement
 from utils_local.utils import profile_time
 
-
 class CalcStatisticsNode:
     """Модуль для расчета загруженности дорог (вычисление статистик)"""
 
@@ -16,7 +15,6 @@ class CalcStatisticsNode:
         self.count_cars_buffer_frames = config_general["count_cars_buffer_frames"]
         self.cars_buffer = deque(maxlen=self.count_cars_buffer_frames)  # создали буфер значений
           
-
     @profile_time 
     def process(self, frame_element: FrameElement) -> FrameElement:
         buffer_tracks = frame_element.buffer_tracks
