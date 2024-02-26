@@ -1,13 +1,14 @@
 from ultralytics import YOLO
 import torch
 import numpy as np
-from utils_local.utils import profile_time
 
+from utils_local.utils import profile_time
 from elements.FrameElement import FrameElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
 
-
 class DetectionTrackingNodes:
+    """Модуль инференса модели детекции + трекинг алгоритма"""
+
     def __init__(self, config) -> None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f'Детекция будет производиться на {device}')

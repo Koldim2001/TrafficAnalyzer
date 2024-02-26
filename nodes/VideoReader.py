@@ -1,15 +1,13 @@
-import cv2
 import os
-import time
-from elements.FrameElement import FrameElement
-import logging
 import json
-
-
+import time
+import logging
 from typing import Generator
+import cv2
+
+from elements.FrameElement import FrameElement
 
 logger = logging.getLogger(__name__)
-
 
 class VideoReader:
     """Модуль для чтения кадров с видеопотока"""

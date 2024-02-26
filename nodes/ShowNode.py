@@ -1,12 +1,13 @@
-import cv2
 import random
+import cv2
 import numpy as np
-from utils_local.utils import profile_time, FPS_Counter
 
+from utils_local.utils import profile_time, FPS_Counter
 from elements.FrameElement import FrameElement
 
-
 class ShowNode:
+    """Модуль отвечающий, за визуализацию результатов"""
+
     def __init__(self, config) -> None:
         data_colors = config["general"]["colors_of_roads"]
         self.colors_roads = {key: tuple(value) for key, value in data_colors.items()}

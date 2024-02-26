@@ -1,7 +1,8 @@
+import logging
+
 from elements.FrameElement import FrameElement
 from elements.TrackElement import TrackElement
 from utils_local.utils import profile_time, intersects_central_point
-import logging
 
 logger = logging.getLogger("buffer_tracks")
 
@@ -12,6 +13,8 @@ class TrackerInfoUpdateNode:
         config_general = config["general"]
 
         self.size_buffer_analytics = config_general["buffer_analytics"] * 60  # число секунд в буфере аналитики 
+        # добавим мин времени жизни чтобы при расчете статистики были именно машины за последие buffer_analytics минут
+        self.size_buffer_analytics += config_general["min_time_life_track"]  
         self.buffer_tracks = {}  # Буфер актуальных треков
 
     @profile_time 

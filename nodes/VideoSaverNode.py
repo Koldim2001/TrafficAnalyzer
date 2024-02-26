@@ -1,9 +1,9 @@
 from pathlib import Path
 import os
-import cv2
-from elements.FrameElement import FrameElement
-import numpy as np
 import logging
+import cv2
+
+from elements.FrameElement import FrameElement
 
 logger = logging.getLogger(__name__)
 
