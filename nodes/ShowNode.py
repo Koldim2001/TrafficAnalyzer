@@ -11,6 +11,10 @@ class ShowNode:
     def __init__(self, config) -> None:
         data_colors = config["general"]["colors_of_roads"]
         self.colors_roads = {key: tuple(value) for key, value in data_colors.items()}
+        self.buffer_analytics_sec = (
+            config["general"]["buffer_analytics"] * 60 +
+            config["general"]["min_time_life_track"]
+        )  # столько по времени буфер набирается и информацию о статистеке выводить рано
         
         config_show_node = config["show_node"]
         self.scale = config_show_node["scale"]
@@ -22,9 +26,9 @@ class ShowNode:
         self.imshow = config_show_node["imshow"]
         self.show_only_yolo_detections = config_show_node["show_only_yolo_detections"]
         self.show_track_id_different_colors = config_show_node["show_track_id_different_colors"]
-        # self.graph_pose = config_show_node["graph_pose"]
+        self.show_info_statistics = config_show_node["show_info_statistics"]
 
-        self.show_number_of_road = True  # отображение номера дороги 
+        self.show_number_of_road = True  # отображение номеров дорог
 
         # Параметры для шрифтов:
         self.fontFace = 1
@@ -33,6 +37,9 @@ class ShowNode:
 
         # Параметры для полигонов и bboxes:
         self.thickness_lines = 2
+
+        # Параметры для экрана статистики:
+        self.width_window = 700  # ширина экрана в пикселях
 
     @profile_time
     def process(self, frame_element: FrameElement, fps_counter=None) -> FrameElement:
@@ -155,6 +162,71 @@ class ShowNode:
                 thickness=self.thickness,
                 color=(255, 255, 255),
             )
+
+        # Обработка отдельного окна с выводом статистики
+        if self.show_info_statistics:
+            black_image = np.zeros((frame_result.shape[0], self.width_window, 3), dtype=np.uint8)
+            data_info = frame_element.info
+
+            # Текст для количества машин
+            text_cars = f"Cars amount: {data_info['cars_amount']}"
+            # Начальная координата для текста
+            y = 55
+            # Выводим текст для количества машин
+            cv2.putText(
+                img=black_image,
+                text=text_cars,
+                org=(20, y),
+                fontFace=self.fontFace,
+                fontScale=self.fontScale*1.5,
+                thickness=self.thickness,
+                color=(255, 255, 255),
+            )
+            # Увеличиваем y на высоту строки текста
+            y += cv2.getTextSize(text_cars, self.fontFace, self.fontScale*1.5, self.thickness)[0][1] + 25
+            # Текст для заголовка
+            text_info = "Traffic congestion:"
+            # Выводим заголовок
+            cv2.putText(
+                img=black_image,
+                text=text_info,
+                org=(20, y),
+                fontFace=self.fontFace,
+                fontScale=self.fontScale*1.5,
+                thickness=self.thickness,
+                color=(255, 255, 255),
+            )
+            # Увеличиваем y на высоту строки текста
+            y += cv2.getTextSize(text_info, self.fontFace, self.fontScale*1.5, self.thickness)[0][1] + 25
+
+            # Проверим, что буфер уже наполнился и можно выводить статистику:
+            if frame_element.timestamp >= self.buffer_analytics_sec:
+                # Выводим информацию по дорогам
+                for key, value in data_info['roads_activity'].items():
+                    text_road = f"  road {key}: {value:.1f} cars/min"
+                    cv2.putText(
+                        img=black_image,
+                        text=text_road,
+                        org=(20, y),
+                        fontFace=self.fontFace,
+                        fontScale=self.fontScale*1.5,
+                        thickness=self.thickness,
+                        color=(255, 255, 255),
+                    )
+                    # Увеличиваем y на высоту строки текста
+                    y += cv2.getTextSize(text_road, self.fontFace, self.fontScale*1.5, self.thickness)[0][1] + 25
+            else:
+                text_to_show = f"   wait {round(self.buffer_analytics_sec - frame_element.timestamp)} sec"
+                cv2.putText(
+                        img=black_image,
+                        text=text_to_show,
+                        org=(20, y),
+                        fontFace=self.fontFace,
+                        fontScale=self.fontScale*1.5,
+                        thickness=self.thickness,
+                        color=(255, 255, 255),
+                    )
+            frame_result = np.hstack((frame_result, black_image))
 
         frame_element.frame_result = frame_result
         frame_show = cv2.resize(frame_result.copy(), (-1, -1), fx=self.scale, fy=self.scale)
