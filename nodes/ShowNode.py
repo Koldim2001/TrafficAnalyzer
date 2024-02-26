@@ -36,7 +36,7 @@ class ShowNode:
         self.thickness = 2
 
         # Параметры для полигонов и bboxes:
-        self.thickness_lines = 2
+        self.thickness_lines = 3
 
         # Параметры для экрана статистики:
         self.width_window = 700  # ширина экрана в пикселях
