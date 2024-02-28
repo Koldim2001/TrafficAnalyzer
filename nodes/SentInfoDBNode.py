@@ -1,3 +1,4 @@
+import time
 import logging
 import psycopg2
 
@@ -14,6 +15,7 @@ class SentInfoDBNode:
         config_db = config["sent_info_db_node"]
         self.how_often_add_info = config_db["how_often_add_info"]
         self.table_name = config_db["table_name"]
+        self.last_db_update = time.time()
 
         # Параметры подключения к базе данных
         db_connection = config_db["connection_info"]
@@ -94,9 +96,12 @@ class SentInfoDBNode:
         timestamp = frame_element.timestamp
         timestamp_date = frame_element.timestamp_date
 
-        if frame_element.frame_num % 50 == 0:
+        # Проверка, нужно ли отправлять информацию в базу данных
+        current_time = time.time()
+        if current_time - self.last_db_update >= self.how_often_add_info:
             self._insert_in_db(info_dictionary, timestamp, timestamp_date)
             frame_element.send_info_of_frame_to_db = True
+            self.last_db_update = current_time  # Обновление времени последнего обновления базы данных
 
         return frame_element
 
@@ -115,11 +120,11 @@ class SentInfoDBNode:
                     timestamp,
                     timestamp_date,
                     info_dictionary['cars_amount'],
-                    info_dictionary['roads_activity'][1],
-                    info_dictionary['roads_activity'][2],
-                    info_dictionary['roads_activity'][3],
-                    info_dictionary['roads_activity'][4],
-                    info_dictionary['roads_activity'][5],
+                    info_dictionary['roads_activity'][1] if timestamp >= self.buffer_analytics_sec else -1,
+                    info_dictionary['roads_activity'][2] if timestamp >= self.buffer_analytics_sec else -1,
+                    info_dictionary['roads_activity'][3] if timestamp >= self.buffer_analytics_sec else -1,
+                    info_dictionary['roads_activity'][4] if timestamp >= self.buffer_analytics_sec else -1,
+                    info_dictionary['roads_activity'][5] if timestamp >= self.buffer_analytics_sec else -1,
                 )
             )
             self.connection.commit()
