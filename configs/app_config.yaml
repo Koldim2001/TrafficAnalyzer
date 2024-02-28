@@ -70,8 +70,8 @@ video_saver_node:
 
 
 sent_info_db_node:
-  how_often_add_info: 5  # как часто добавлять новую информацию (раз в столько секунд) ps: int значение требуется
-  table_name: traffic_info  # Имя таблицы в БД в которую ведем запись
+  how_often_add_info: 5  # как часто добавлять новую информацию (раз в столько секунд)
+  table_name: traffic_info  # имя таблицы в БД в которую ведем запись
   connection_info:  # данные о подключении (должны совпадать со значениями из docker-compose файла)
     user: user
     password: pwd

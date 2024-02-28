@@ -89,7 +89,7 @@ class SentInfoDBNode:
             return frame_element
         assert isinstance(
             frame_element, FrameElement
-        ), f"CalcStatisticsNode | Неправильный формат входного элемента {type(frame_element)}"
+        ), f"SentInfoDBNode | Неправильный формат входного элемента {type(frame_element)}"
 
         # Получение значений для записи в бд новой строки:
         info_dictionary = frame_element.info

@@ -30,7 +30,7 @@ def main(config) -> None:
         frame_element = calc_statistics_node.process(frame_element)
 
         if sent_info_db:
-            sent_info_db_node.process(frame_element)
+            frame_element = sent_info_db_node.process(frame_element)
 
         frame_element = show_node.process(frame_element)
 
