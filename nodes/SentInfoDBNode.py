@@ -1,7 +1,11 @@
+import logging
+import psycopg2
+
 from elements.FrameElement import FrameElement
 from elements.VideoEndBreakElement import VideoEndBreakElement
 from utils_local.utils import profile_time
-import psycopg2
+
+logger = logging.getLogger(__name__)
 
 class SentInfoDBNode:
     """Модуль для отправки актуальной информации о трафике в базу данных"""
@@ -44,7 +48,9 @@ class SentInfoDBNode:
             self.cursor.execute(drop_table_query)
             self.connection.commit()
         except (Exception, psycopg2.Error) as error:
-            print("Error while dropping table:", error)
+            logger.error(
+                f"Error while dropping table:: {error}"
+            ) 
 
         # SQL-запрос для создания таблицы
         create_table_query = f"""
@@ -65,9 +71,13 @@ class SentInfoDBNode:
         try:
             self.cursor.execute(create_table_query)
             self.connection.commit()
-            print(f"Table {self.table_name} created successfully")
+            logger.info(
+                f"Table {self.table_name} created successfully"
+            ) 
         except (Exception, psycopg2.Error) as error:
-            print("Error while creating table:", error)
+            logger.error(
+                f"Error while creating table: {error}"
+            )   
 
 
     @profile_time 
@@ -84,10 +94,39 @@ class SentInfoDBNode:
         timestamp = frame_element.timestamp
         timestamp_date = frame_element.timestamp_date
 
-        # для дебага оставил:
-        if frame_element.frame_num % 100 == 0:
-            print(info_dictionary)
-            
+        if frame_element.frame_num % 50 == 0:
+            self._insert_in_db(info_dictionary, timestamp, timestamp_date)
             frame_element.send_info_of_frame_to_db = True
 
         return frame_element
+
+
+    def _insert_in_db(self, info_dictionary: dict, timestamp: float, timestamp_date: float) -> None:
+        # Формирование и выполнение SQL-запроса для вставки данных в бд
+        insert_query = (
+            f"INSERT INTO {self.table_name} "
+            "(timestamp, timestamp_date, cars, road_1, road_2, road_3, road_4, road_5) "
+            "VALUES (%s, to_timestamp(%s), %s, %s, %s, %s, %s, %s);"
+        )
+        try:
+            self.cursor.execute(
+                insert_query,
+                (
+                    timestamp,
+                    timestamp_date,
+                    info_dictionary['cars_amount'],
+                    info_dictionary['roads_activity'][1],
+                    info_dictionary['roads_activity'][2],
+                    info_dictionary['roads_activity'][3],
+                    info_dictionary['roads_activity'][4],
+                    info_dictionary['roads_activity'][5],
+                )
+            )
+            self.connection.commit()
+            logger.info(
+                f"Successfully inserted data into PostgreSQL"
+            )   
+        except (Exception, psycopg2.Error) as error:
+            logger.error(
+                f"Error while inserting data into PostgreSQL: {error}"
+            )   
