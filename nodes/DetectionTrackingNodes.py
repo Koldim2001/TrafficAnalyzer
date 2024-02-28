@@ -1,16 +1,15 @@
 from ultralytics import YOLO
-import cv2
 import torch
 import numpy as np
-from utils_local.utils import profile_time
-from collections import deque
 
+from utils_local.utils import profile_time
 from elements.FrameElement import FrameElement
+from elements.VideoEndBreakElement import VideoEndBreakElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
 
-
-
 class DetectionTrackingNodes:
+    """Модуль инференса модели детекции + трекинг алгоритма"""
+
     def __init__(self, config) -> None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f'Детекция будет производиться на {device}')
@@ -34,9 +33,15 @@ class DetectionTrackingNodes:
         fps = 30  # ставим равным 30 чтобы track_buffer мерился в кадрах
         self.tracker = ByteTracker(fps, first_track_thresh, second_track_thresh, match_thresh, track_buffer, 1)
 
-
     @profile_time
-    def process(self, frame_element: FrameElement):
+    def process(self, frame_element: FrameElement) -> FrameElement:
+        # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
+        if isinstance(frame_element, VideoEndBreakElement):
+            return frame_element
+        assert isinstance(
+            frame_element, FrameElement
+        ), f"DetectionTrackingNodes | Неправильный формат входного элемента {type(frame_element)}"
+
         frame = frame_element.frame.copy()
 
         outputs = self.model.predict(frame, imgsz=self.imgsz, conf=self.conf, verbose=False,
@@ -68,14 +73,9 @@ class DetectionTrackingNodes:
         # Получение conf scores
         frame_element.tracked_conf = [t.score for t in track_list]
 
-        # Получение числа видимых в данном кадре треков
-        num_objects = len(frame_element.id_list)
-
         return frame_element
 
-
-
-    def _get_results_dor_tracker(self, results):
+    def _get_results_dor_tracker(self, results) -> np.ndarray:
         # Приведение данных в правильную форму для трекера
         detections_list = []
         for result in results[0]:

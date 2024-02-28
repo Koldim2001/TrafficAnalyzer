@@ -3,3 +3,4 @@ ultralytics
 opencv-python
 lap
 cython_bbox
+shapely

@@ -1,8 +1,7 @@
 import logging
 import time
 import numpy as np
-import cv2
-import pandas as pd
+from shapely.geometry import Point, Polygon
 
 logger_profile = logging.getLogger("profile")
 
@@ -51,3 +50,22 @@ class FPS_Counter:
             return 0.0
 
 
+
+def intersects_central_point(tracked_xyxy, polygons):
+    """Функция определяет присутвие центральной точки bbox в  области полигонов дорог
+
+    Args:
+        tracked_xyxy: координаты bbox
+        polygons: словарь полигонов
+
+    Returns:
+        Лиибо None либо значение ключа (номер дороги - int)
+    """    
+    # Центральная точка bbox:
+    center_point = [(tracked_xyxy[0] + tracked_xyxy[2]) / 2, (tracked_xyxy[1] + tracked_xyxy[3]) / 2]  
+    center_point = Point(center_point)
+    for key, polygon in polygons.items():
+        polygon = Polygon([(polygon[i], polygon[i+1]) for i in range(0, len(polygon), 2)])
+        if polygon.contains(center_point):
+            return int(key)
+    return None
