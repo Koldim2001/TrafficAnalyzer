@@ -120,11 +120,11 @@ class SentInfoDBNode:
                     timestamp,
                     timestamp_date,
                     info_dictionary['cars_amount'],
-                    info_dictionary['roads_activity'][1] if timestamp >= self.buffer_analytics_sec else -1,
-                    info_dictionary['roads_activity'][2] if timestamp >= self.buffer_analytics_sec else -1,
-                    info_dictionary['roads_activity'][3] if timestamp >= self.buffer_analytics_sec else -1,
-                    info_dictionary['roads_activity'][4] if timestamp >= self.buffer_analytics_sec else -1,
-                    info_dictionary['roads_activity'][5] if timestamp >= self.buffer_analytics_sec else -1,
+                    info_dictionary['roads_activity'][1] if timestamp >= self.buffer_analytics_sec else None,
+                    info_dictionary['roads_activity'][2] if timestamp >= self.buffer_analytics_sec else None,
+                    info_dictionary['roads_activity'][3] if timestamp >= self.buffer_analytics_sec else None,
+                    info_dictionary['roads_activity'][4] if timestamp >= self.buffer_analytics_sec else None,
+                    info_dictionary['roads_activity'][5] if timestamp >= self.buffer_analytics_sec else None,
                 )
             )
             self.connection.commit()
