@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+
+  pg_data_wh:
+    container_name: pg_data_wh
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: traffic_analyzer_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pwd
+    ports:
+      - "5488:5432"
+    volumes:
+      - ./services/pg_data_wh:/var/lib/postgresql/data
+
+  pg_grafana:
+    container_name: pg_grafana
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: my_grafana_db
+      POSTGRES_USER: my_grafana_user
+      POSTGRES_PASSWORD: my_grafana_pwd
+    ports:
+      - "5499:5432"
+    volumes:
+      - ./services/pg_grafana:/var/lib/postgresql/data
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: pg_grafana
+      GF_DATABASE_NAME: my_grafana_db
+      GF_DATABASE_USER: my_grafana_user
+      GF_DATABASE_PASSWORD: my_grafana_pwd
+      GF_DATABASE_SSL_MODE: disable
+    restart: unless-stopped
+    depends_on:
+      - pg_grafana
+    ports:
+      - "3111:3000"
+    volumes:
+      - ./services/grafana:/var/lib/grafana
+
+volumes:
+  pg_data_wh:
+  pg_grafana:
+  grafana:

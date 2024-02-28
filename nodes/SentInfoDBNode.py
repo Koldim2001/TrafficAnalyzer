@@ -3,7 +3,6 @@ from elements.VideoEndBreakElement import VideoEndBreakElement
 from utils_local.utils import profile_time
 import psycopg2
 
-
 class SentInfoDBNode:
     """Модуль для отправки актуальной информации о трафике в базу данных"""
 
@@ -13,12 +12,12 @@ class SentInfoDBNode:
         self.table_name = config_db["table_name"]
 
         # Параметры подключения к базе данных
-        db_connection = config["connection_info"]
+        db_connection = config_db["connection_info"]
         conn_params = {
             "user": db_connection["user"],
             "password": db_connection["password"],
             "host": db_connection["host"],
-            "port": str(db_connection["5488"]),
+            "port": str(db_connection["port"]),
             "database": db_connection["database"],
         }
 
@@ -58,7 +57,7 @@ class SentInfoDBNode:
             road_2 FLOAT,
             road_3 FLOAT,
             road_4 FLOAT,
-            road_5 FLOAT,
+            road_5 FLOAT
         );
         """
 
@@ -66,12 +65,11 @@ class SentInfoDBNode:
         try:
             self.cursor.execute(create_table_query)
             self.connection.commit()
-            print("Table created successfully")
+            print(f"Table {self.table_name} created successfully")
         except (Exception, psycopg2.Error) as error:
             print("Error while creating table:", error)
 
 
-            
     @profile_time 
     def process(self, frame_element: FrameElement) -> FrameElement:
         # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
