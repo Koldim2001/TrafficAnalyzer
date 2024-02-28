@@ -171,6 +171,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
             "barAlignment": 0,
@@ -326,7 +327,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  road_1 AS \"Road 1\",\r\n  road_2 AS \"Road 2\",\r\n  road_3 AS \"Road 3\",\r\n  road_4 AS \"Road 4\",\r\n  road_5 AS \"Road 5\",\r\n  timestamp_date\r\nFROM\r\n  traffic_info\r\nORDER BY timestamp_date DESC\r\nLIMIT\r\n  200;\r\n\r\n",
+          "rawSql": "SELECT\r\n  road_1 AS \"Road 1\",\r\n  road_2 AS \"Road 2\",\r\n  road_3 AS \"Road 3\",\r\n  road_4 AS \"Road 4\",\r\n  road_5 AS \"Road 5\",\r\n  timestamp_date\r\nFROM\r\n  traffic_info\r\nORDER BY timestamp_date DESC\r\n\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -490,7 +491,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT timestamp_date, cars FROM traffic_info LIMIT 200 ",
+          "rawSql": "SELECT timestamp_date, cars FROM traffic_info  ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -544,6 +545,6 @@
   "timezone": "",
   "title": "dashboard_TrafficAnalyzer",
   "uid": "efc59f9a-5a73-4e3a-a120-0dd5a4508530",
-  "version": 8,
+  "version": 2,
   "weekStart": ""
 }
