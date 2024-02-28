@@ -4,3 +4,4 @@ opencv-python
 lap
 cython_bbox
 shapely
+psycopg2

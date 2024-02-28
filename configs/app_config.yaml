@@ -13,6 +13,7 @@ hydra:
 
 pipeline:
   save_video : False  # Сохранение итогового видео обработки
+  sent_info_db: True  # Сохраняем ли инфо в бд (требуется заранее запустить микросервисы если ставите True)
   
 #--------------------------------------------------GENERAL--------------------------------------------------
 
@@ -66,4 +67,15 @@ show_node:
 video_saver_node:
   fps : 24  # при увеличении позволяет ускорить итоговое видео
   out_folder : test_videos/videos_out  # в какую папку сохранить результат
+
+
+sent_info_db_node:
+  how_often_add_info: 5  # как часто добавлять новую информацию (раз в столько секунд) ps: int значение требуется
+  table_name: traffic_info  # Имя таблицы в БД в которую ведем запись
+  connection_info:  # данные о подключении (должны совпадать со значениями из docker-compose файла)
+    user: user
+    password: pwd
+    host: localhost
+    port: 5488  # внешний порт контейнера с PostgreSQL
+    database: traffic_analyzer_db
 
