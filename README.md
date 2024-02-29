@@ -45,21 +45,6 @@ __Пример режима демонстрации трекинга машин
 ![Traffic Tracking](content_for_readme/traffic_tracking.gif)
 
 ---
-## Рассмотрим, как реализован код:
-
-Каждый кадр последовательно проходит через ноды, и в атрибуты этого объекта постепенно добавляется все больше и больше информации.
-
-```mermaid
-graph TD;
-    A["VideoReader<br>Считывает кадры из видеофайла"] --> B["DetectionTrackingNodes<br>Реализует детектирование машин + трекинг"];
-    B --> C["TrackerInfoUpdateNode<br>Обновляет информацию об актуальных треках"];
-    C --> D["CalcStatisticsNode<br>Вычисляет загруженность дорог"];
-    D --sent_info_db==False --> F;
-    D --sent_info_db==True --> E["SentInfoDBNode<br>Отправляет результаты в базу данных"];
-    E --> F["ShowNode<br>Отображает результаты на экране"];
-    F --save_video==True --> H["VideoSaverNode<br>Сохраняет обработанные кадры"];
-```
----
 ## Включение сторонних сервисов для визуализации результатов
 
 ![Dashboard](content_for_readme/grafana.jpg)
@@ -80,3 +65,20 @@ python main_optimized.py
 
 Пример того, как в реальном времени строятся графики на дашборде после запуска кода:
 ![Grafana](content_for_readme/grafana.gif)
+
+---
+
+## Рассмотрим, как реализован код:
+
+Каждый кадр последовательно проходит через ноды, и в атрибуты этого объекта постепенно добавляется все больше и больше информации.
+
+```mermaid
+graph TD;
+    A["VideoReader<br>Считывает кадры из видеофайла"] --> B["DetectionTrackingNodes<br>Реализует детектирование машин + трекинг"];
+    B --> C["TrackerInfoUpdateNode<br>Обновляет информацию об актуальных треках"];
+    C --> D["CalcStatisticsNode<br>Вычисляет загруженность дорог"];
+    D --sent_info_db==False --> F;
+    D --sent_info_db==True --> E["SentInfoDBNode<br>Отправляет результаты в базу данных"];
+    E --> F["ShowNode<br>Отображает результаты на экране"];
+    F --save_video==True --> H["VideoSaverNode<br>Сохраняет обработанные кадры"];
+```
