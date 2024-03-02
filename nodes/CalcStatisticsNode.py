@@ -51,9 +51,5 @@ class CalcStatisticsNode:
         # Запись результатов обработки:
         frame_element.info = info_dictionary
 
-        # для дебага оставил:
-        #if frame_element.frame_num % 100 == 0:
-        #   print(info_dictionary)
-
         return frame_element
 
