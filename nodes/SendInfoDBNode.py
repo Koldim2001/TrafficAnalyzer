@@ -8,11 +8,11 @@ from utils_local.utils import profile_time
 
 logger = logging.getLogger(__name__)
 
-class SentInfoDBNode:
+class SendInfoDBNode:
     """Модуль для отправки актуальной информации о трафике в базу данных"""
 
     def __init__(self, config: dict) -> None:
-        config_db = config["sent_info_db_node"]
+        config_db = config["send_info_db_node"]
         self.how_often_add_info = config_db["how_often_add_info"]
         self.table_name = config_db["table_name"]
         self.last_db_update = time.time()
@@ -89,7 +89,7 @@ class SentInfoDBNode:
             return frame_element
         assert isinstance(
             frame_element, FrameElement
-        ), f"SentInfoDBNode | Неправильный формат входного элемента {type(frame_element)}"
+        ), f"SendInfoDBNode | Неправильный формат входного элемента {type(frame_element)}"
 
         # Получение значений для записи в бд новой строки:
         info_dictionary = frame_element.info
