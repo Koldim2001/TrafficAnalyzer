@@ -7,6 +7,7 @@ from elements.FrameElement import FrameElement
 from elements.VideoEndBreakElement import VideoEndBreakElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
 
+
 class DetectionTrackingNodes:
     """Модуль инференса модели детекции + трекинг алгоритма"""
 
@@ -31,7 +32,9 @@ class DetectionTrackingNodes:
         match_thresh = config_bytetrack["match_thresh"]
         track_buffer = config_bytetrack["track_buffer"]
         fps = 30  # ставим равным 30 чтобы track_buffer мерился в кадрах
-        self.tracker = ByteTracker(fps, first_track_thresh, second_track_thresh, match_thresh, track_buffer, 1)
+        self.tracker = ByteTracker(
+            fps, first_track_thresh, second_track_thresh, match_thresh, track_buffer, 1
+        )
 
     @profile_time
     def process(self, frame_element: FrameElement) -> FrameElement:
@@ -82,14 +85,23 @@ class DetectionTrackingNodes:
             class_id = result.boxes.cls.cpu().numpy().astype(int)
             # трекаем те же классы что и детектируем
             if class_id[0] in self.classes_to_detect:
-                    
+
                 bbox = result.boxes.xyxy.cpu().numpy()
                 confidence = result.boxes.conf.cpu().numpy()
 
-                class_id_value = 2 # Будем все трекуемые объекты считать классом car чтобы не было ошибок
-                
-                merged_detection = [bbox[0][0], bbox[0][1], bbox[0][2], bbox[0][3], confidence[0], class_id_value]
-                
+                class_id_value = (
+                    2  # Будем все трекуемые объекты считать классом car чтобы не было ошибок
+                )
+
+                merged_detection = [
+                    bbox[0][0],
+                    bbox[0][1],
+                    bbox[0][2],
+                    bbox[0][3],
+                    confidence[0],
+                    class_id_value,
+                ]
+
                 detections_list.append(merged_detection)
-    
+
         return np.array(detections_list)

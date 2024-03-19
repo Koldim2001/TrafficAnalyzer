@@ -7,15 +7,19 @@ from utils_local.utils import profile_time, intersects_central_point
 
 logger = logging.getLogger("buffer_tracks")
 
+
 class TrackerInfoUpdateNode:
     """Модуль обновления актуальных треков"""
 
     def __init__(self, config: dict) -> None:
         config_general = config["general"]
 
-        self.size_buffer_analytics = config_general["buffer_analytics"] * 60  # число секунд в буфере аналитики 
-        # добавим мин времени жизни чтобы при расчете статистики были именно машины за последие buffer_analytics минут
-        self.size_buffer_analytics += config_general["min_time_life_track"]  
+        self.size_buffer_analytics = (
+            config_general["buffer_analytics"] * 60
+        )  # число секунд в буфере аналитики
+        # добавим мин времени жизни чтобы при расчете статистики были именно
+        # машины за последие buffer_analytics минут:
+        self.size_buffer_analytics += config_general["min_time_life_track"]
         self.buffer_tracks = {}  # Буфер актуальных треков
 
     @profile_time 
@@ -51,7 +55,7 @@ class TrackerInfoUpdateNode:
                 if self.buffer_tracks[id].start_road is not None:
                     # Тогда сохраняем время такого момента:
                     self.buffer_tracks[id].timestamp_init_road = frame_element.timestamp
-        
+
         # Удаление старых айдишников из словаря если их время жизни > size_buffer_analytics
         keys_to_remove = []
         for key, track_element in sorted(self.buffer_tracks.items()):  # Сортируем элементы по ключу
@@ -62,12 +66,9 @@ class TrackerInfoUpdateNode:
 
         for key in keys_to_remove:
             self.buffer_tracks.pop(key)  # Удаляем элемент из словаря
-            logger.info(
-            f"Removed tracker with key {key}"
-        )
+            logger.info(f"Removed tracker with key {key}")
 
         # Запись результатов обработки:
         frame_element.buffer_tracks = self.buffer_tracks
 
         return frame_element
-

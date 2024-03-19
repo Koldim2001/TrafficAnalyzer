@@ -1,7 +1,8 @@
-import hydra
 from time import sleep, time
-from tqdm import tqdm
 from multiprocessing import Process, Queue
+
+import hydra
+from tqdm import tqdm
 
 from nodes.VideoReader import VideoReader
 from nodes.ShowNode import ShowNode
@@ -109,7 +110,7 @@ def main(config) -> None:
             target=proc_show_node,
             args=(queue_track_update_out, config),
             name="proc_show_node",
-        )
+        ),
     ]
 
     for p in processes:

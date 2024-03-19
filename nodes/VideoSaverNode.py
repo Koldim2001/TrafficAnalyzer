@@ -8,6 +8,7 @@ from elements.VideoEndBreakElement import VideoEndBreakElement
 
 logger = logging.getLogger(__name__)
 
+
 class VideoSaverNode:
     """Модуль для сохранения видеопотока"""
 
@@ -21,7 +22,7 @@ class VideoSaverNode:
         # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
         if isinstance(frame_element, VideoEndBreakElement):
             print(f"Видео сохранено в папке {self.out_folder}")
-            return 
+            return
         assert isinstance(
             frame_element, FrameElement
         ), f"VideoSaverNode | Неправильный формат входного элемента {type(frame_element)}"

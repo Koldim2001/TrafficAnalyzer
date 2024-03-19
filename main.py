@@ -22,9 +22,9 @@ def main(config) -> None:
 
     if send_info_db:
         send_info_db_node = SendInfoDBNode(config)
-    
+
     for frame_element in video_reader.process():
-        
+
         frame_element = detection_node.process(frame_element)
         frame_element = tracker_info_update_node.process(frame_element)
         frame_element = calc_statistics_node.process(frame_element)
