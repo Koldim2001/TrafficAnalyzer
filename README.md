@@ -27,6 +27,11 @@ python main.py hydra.job_logging.root.level=DEBUG
 ```
 python main_optimized.py 
 ```
+Для тестирования работы проекта в репозитории уже имеется видео test_videos/test_video.mp4. 
+Кроме того, у вас есть возможность загрузить более длинное видео, пройдя по следующей ссылке: [Google Drive ссылка](https://drive.google.com/file/d/18zeVSqqgNoxIerP6XyBE4jenECLLdBkD/view?usp=sharing).
+
+Чтобы запустить проект с определенным видео, необходимо указать путь к нему в файле конфигурации configs/app_config.yaml проекта в разделе video_reader.src.
+
 ---
 ## Примеры работы кода:
 
