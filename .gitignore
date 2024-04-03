@@ -3,7 +3,9 @@ __pycache__
 drafts
 logs
 **.mp4
+**.ipynb
 videos_out
 test_videos
 test.ipynb
 services
+myenv

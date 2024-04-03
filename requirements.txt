@@ -1,7 +1,7 @@
-hydra-core
-ultralytics
-opencv-python
-lap
-cython_bbox
-shapely
-psycopg2
+ultralytics==8.1.42
+opencv-python==4.9.0.80
+lap==0.4.0
+cython-bbox==0.1.5
+shapely==2.0.3
+psycopg2==2.9.9
+hydra-core==1.3.2
