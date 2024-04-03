@@ -5,7 +5,7 @@
 Подробный туториал по проекту - [__ссылка на видео__](https://youtu.be/u9EtqHz4Vqc)
 
 ## Установка:
-Необходима версия Python >= 3.10 (лучше 3.10.13)
+Необходима версия Python >= 3.10 (лучше 3.10.14)
 ```
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
