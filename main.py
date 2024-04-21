@@ -40,6 +40,7 @@ def main(config) -> None:
     for frame_element in video_reader.process():
 
         if isinstance(frame_element, VideoEndBreakElement):
+            video_server.stop_server()
             break # Обрывание обработки при окончании стрима
 
         frame_element = detection_node.process(frame_element)

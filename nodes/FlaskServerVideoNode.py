@@ -2,6 +2,8 @@ from flask import Flask, render_template, Response
 from threading import Thread
 import numpy as np
 import cv2
+import signal
+import os
 
 
 class EndpointAction(object):
@@ -44,8 +46,12 @@ class VideoServer(object):
         self._frame = image
 
     def run(self):
-        app_thread = Thread(target=self.app.run, args=(self.host_ip, self.port))
-        app_thread.start()
+        self.app_thread = Thread(target=self.app.run, args=(self.host_ip, self.port))
+        self.app_thread.start()
+
+    def stop_server(self):
+        os.kill(os.getpid(), signal.SIGINT)
+        self.app_thread.join()
 
 
 
