@@ -25,8 +25,6 @@ def proc_frame_reader_and_detection(queue_out: Queue, config: dict, time_sleep_s
     video_reader = VideoReader(config["video_reader"])
     detection_node = DetectionTrackingNodes(config)
     for frame_element in video_reader.process():
-        if isinstance(frame_element, VideoEndBreakElement):
-            break
         ts0 = time()
         frame_element = detection_node.process(frame_element)
         ts1 = time()
@@ -37,6 +35,8 @@ def proc_frame_reader_and_detection(queue_out: Queue, config: dict, time_sleep_s
                 + f"detection_node {(ts1-ts0) * 1000:.0f} | "
                 + f"put {(time()-ts1) * 1000:.0f}"
             )
+        if isinstance(frame_element, VideoEndBreakElement):
+            break
 
 
 def proc_tracker_update_and_calc(queue_in: Queue, queue_out: Queue, config: dict):
@@ -48,8 +48,6 @@ def proc_tracker_update_and_calc(queue_in: Queue, queue_out: Queue, config: dict
     while True:
         ts0 = time()
         frame_element = queue_in.get()
-        if isinstance(frame_element, VideoEndBreakElement):
-            break
         ts1 = time()
         frame_element = tracker_info_update_node.process(frame_element)
         frame_element = calc_statistics_node.process(frame_element)
@@ -64,14 +62,24 @@ def proc_tracker_update_and_calc(queue_in: Queue, queue_out: Queue, config: dict
                 + f"nodes_inference {(ts2-ts1) * 1000:.0f} | "
                 + f"put {(time()-ts2) * 1000:.0f}"
             )
+        if isinstance(frame_element, VideoEndBreakElement):
+            break
 
 
 def proc_show_node(queue_in: Queue, config: dict):
     show_node = ShowNode(config)
-    video_server = VideoServer(index_page="index.html", host_ip="localhost", template_folder="../utils_local/templates")
-    video_server.run()
-    video_saver_node = VideoSaverNode(config["video_saver_node"])
     save_video = config["pipeline"]["save_video"]
+    show_in_web = config["pipeline"]["show_in_web"]
+    if save_video:
+        video_saver_node = VideoSaverNode(config["video_saver_node"])
+    if show_in_web:
+        video_server = VideoServer(
+            index_page="index.html",
+            host_ip="localhost",
+            port=8100,
+            template_folder="../utils_local/templates",
+        )
+        video_server.run()
     while True:
         ts0 = time()
         frame_element = queue_in.get()
@@ -81,7 +89,8 @@ def proc_show_node(queue_in: Queue, config: dict):
         frame_element = show_node.process(frame_element)
         if save_video:
             video_saver_node.process(frame_element)
-        video_server.update_image(frame_element.frame_result)
+        if show_in_web:
+            video_server.update_image(frame_element.frame_result)
         ts2 = time()
         if PRINT_PROFILE_INFO:
             print(
