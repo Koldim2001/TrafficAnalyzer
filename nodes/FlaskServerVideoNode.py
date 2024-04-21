@@ -43,12 +43,14 @@ class VideoServer(object):
         self._frame = image
 
     def run(self):
-        app_thread = Thread(target=self.app.run, args=(self.host_ip, 8100))
-        app_thread.start()
+        self.app_thread = Thread(target=self.app.run, args=(self.host_ip, 8100))
+        self.app_thread.start()
+
+
 
 
 if __name__ == "__main__":
-    video_server = VideoServer("index.html", "0.0.0.0", "./utils_local/templates")
+    video_server = VideoServer("index.html", "0.0.0.0", "../utils_local/templates")
     video_server.run()
     while True:
         img = np.random.randint(0, 255, size=(480, 640, 3), dtype=np.uint8)

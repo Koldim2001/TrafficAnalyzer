@@ -7,6 +7,7 @@ from nodes.TrackerInfoUpdateNode import TrackerInfoUpdateNode
 from nodes.CalcStatisticsNode import CalcStatisticsNode
 from nodes.SendInfoDBNode import SendInfoDBNode
 from nodes.FlaskServerVideoNode import VideoServer
+from elements.VideoEndBreakElement import VideoEndBreakElement
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
@@ -28,6 +29,10 @@ def main(config) -> None:
         send_info_db_node = SendInfoDBNode(config)
 
     for frame_element in video_reader.process():
+
+        if isinstance(frame_element, VideoEndBreakElement):
+            #video_server.stop()
+            break # Обрывание обработки при окончании стрима
 
         frame_element = detection_node.process(frame_element)
         frame_element = tracker_info_update_node.process(frame_element)
