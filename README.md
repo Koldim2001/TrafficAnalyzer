@@ -100,4 +100,6 @@ graph TD;
     D --sent_info_db==True --> E["SentInfoDBNode<br>Отправляет результаты в базу данных"];
     E --> F["ShowNode<br>Отображает результаты на экране"];
     F --save_video==True --> H["VideoSaverNode<br>Сохраняет обработанные кадры"];
+    F --show_in_web==True & save_video==False --> L["FlaskServerVideoNode<br>Обновляет кадры в веб-интерфейсе"];
+    H --show_in_web==True --> L
 ```
