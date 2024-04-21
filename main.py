@@ -6,6 +6,7 @@ from nodes.DetectionTrackingNodes import DetectionTrackingNodes
 from nodes.TrackerInfoUpdateNode import TrackerInfoUpdateNode
 from nodes.CalcStatisticsNode import CalcStatisticsNode
 from nodes.SendInfoDBNode import SendInfoDBNode
+from nodes.FlaskServerVideoNode import VideoServer
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
@@ -16,6 +17,9 @@ def main(config) -> None:
     calc_statistics_node = CalcStatisticsNode(config)
     show_node = ShowNode(config)
     video_saver_node = VideoSaverNode(config["video_saver_node"])
+
+    video_server = VideoServer(index_page="index.html", host_ip="localhost", template_folder="../utils_local/templates")
+    video_server.run()
 
     save_video = config["pipeline"]["save_video"]
     send_info_db = config["pipeline"]["send_info_db"]
@@ -36,6 +40,9 @@ def main(config) -> None:
 
         if save_video:
             video_saver_node.process(frame_element)
+
+    
+        video_server.update_image(frame_element.frame_result)
 
 
 if __name__ == "__main__":
