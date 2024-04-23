@@ -68,9 +68,23 @@ run_services.bat
 ```
 python main_optimized.py 
 ```
+Для доступа в Grafana необходимо перйти на сайт http://localhost:3111/
 
 Пример того, как в реальном времени строятся графики на дашборде после запуска кода:
+
 ![Grafana](content_for_readme/grafana.gif)
+
+---
+
+## Вывод обработанного видеопотока в веб-интерфейс:
+
+Обработанные кадры можно отображать в веб-интерфейсе (вместо отдельного окна OpenCV). Бэкенд сайта реализован с использованием Flask.
+
+Для того, чтобы запустить проект таким образом, необходимо в файле configs/app_config.yaml в разделе pipeline указать show_in_web=True и в show_node указать imshow=False. Далее можно запускать main.py или main_optimized.py и переходить по ссылке http://localhost:8100/
+
+Пример того, как можно запустить проект и иметь возможность одновременно смотреть стрим по порту 8100 и наблюдать интерактивный дашборд в Grafana по порту 3111:
+
+![web+grafana](content_for_readme/web+grafana.gif)
 
 ---
 
@@ -87,4 +101,6 @@ graph TD;
     D --sent_info_db==True --> E["SentInfoDBNode<br>Отправляет результаты в базу данных"];
     E --> F["ShowNode<br>Отображает результаты на экране"];
     F --save_video==True --> H["VideoSaverNode<br>Сохраняет обработанные кадры"];
+    F --show_in_web==True & save_video==False --> L["FlaskServerVideoNode<br>Обновляет кадры в веб-интерфейсе"];
+    H --show_in_web==True --> L
 ```
