@@ -95,6 +95,8 @@ def proc_show_node(queue_in: Queue, config: dict):
                 + f"show_node {(ts2-ts1) * 1000:.0f} | "
                 + f"put {(time()-ts2) * 1000:.0f}"
             )
+        if isinstance(frame_element, VideoEndBreakElement):
+                break
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
