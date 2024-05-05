@@ -29,13 +29,8 @@ def main(config) -> None:
         send_info_db_node = SendInfoDBNode(config)
 
     if show_in_web:
-        video_server = VideoServer(
-            index_page="index.html",
-            host_ip="localhost",
-            port=8100,
-            template_folder="../utils_local/templates",
-        )
-        video_server.run()
+        video_server_node = VideoServer(config)
+        video_server_node.run()
 
     for frame_element in video_reader.process():
 
@@ -53,9 +48,9 @@ def main(config) -> None:
 
         if show_in_web:
             if isinstance(frame_element, VideoEndBreakElement):
-                video_server.stop_server()
+                video_server_node.stop_server()
                 break # Обрывание обработки при окончании стрима
-            video_server.update_image(frame_element.frame_result)
+            video_server_node.update_image(frame_element.frame_result)
 
 
 if __name__ == "__main__":

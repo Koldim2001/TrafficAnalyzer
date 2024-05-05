@@ -73,13 +73,8 @@ def proc_show_node(queue_in: Queue, config: dict):
     if save_video:
         video_saver_node = VideoSaverNode(config["video_saver_node"])
     if show_in_web:
-        video_server = VideoServer(
-            index_page="index.html",
-            host_ip="localhost",
-            port=8100,
-            template_folder="../utils_local/templates",
-        )
-        video_server.run()
+        video_server_node = VideoServer(config)
+        video_server_node.run()
     while True:
         ts0 = time()
         frame_element = queue_in.get()
@@ -89,9 +84,9 @@ def proc_show_node(queue_in: Queue, config: dict):
             video_saver_node.process(frame_element)
         if show_in_web:
             if isinstance(frame_element, VideoEndBreakElement):
-                video_server.stop_server()
+                video_server_node.stop_server()
                 break
-            video_server.update_image(frame_element.frame_result)
+            video_server_node.update_image(frame_element.frame_result)
         ts2 = time()
         if PRINT_PROFILE_INFO:
             print(

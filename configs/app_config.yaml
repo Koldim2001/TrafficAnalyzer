@@ -80,3 +80,10 @@ send_info_db_node:
     port: 5488  # внешний порт контейнера с PostgreSQL
     database: traffic_analyzer_db
 
+
+video_server_node: 
+  index_page: index.html  
+  host_ip: localhost  # где именно поднять сервис (localhost или "0.0.0.0")
+  port: 8100  # На каком порту поднять
+  template_folder: ../utils_local/templates  # Путь до templates (там где html файл)
+

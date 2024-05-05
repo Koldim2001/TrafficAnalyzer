@@ -19,14 +19,15 @@ class EndpointAction(object):
 
 class VideoServer(object):
     app = None
-    def __init__(self, index_page: str, host_ip: str, port: int, template_folder: str):
-        self.app = Flask(__name__, template_folder=template_folder)
+    def __init__(self, config):
+        config_server = config["video_server_node"]
+        self.app = Flask(__name__, template_folder=config_server["template_folder"])
         self.app.add_url_rule('/', 'index', EndpointAction(self._index))
         self.app.add_url_rule('/video', 'video', self._update_page)
 
-        self.host_ip = host_ip
-        self.port = port
-        self.index_page = index_page
+        self.host_ip = config_server["host_ip"]
+        self.port = config_server["port"]
+        self.index_page = config_server["index_page"]
         self._frame = np.zeros(shape=(640, 480), dtype=np.uint8)
 
     def _index(self) -> str:
@@ -56,7 +57,15 @@ class VideoServer(object):
 
 
 if __name__ == "__main__":
-    video_server = VideoServer("index.html", "0.0.0.0", 8100, "../utils_local/templates")
+    config = {
+        "video_server_node": {
+            "index_page": "index.html",
+            "host_ip": "localhost",
+            "port": 8100,
+            "template_folder": "../utils_local/templates",
+        }
+    }
+    video_server = VideoServer(config)
     video_server.run()
     while True:
         img = np.random.randint(0, 255, size=(480, 640, 3), dtype=np.uint8)
