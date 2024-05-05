@@ -87,10 +87,10 @@ def proc_show_node(queue_in: Queue, config: dict):
         frame_element = show_node.process(frame_element)
         if save_video:
             video_saver_node.process(frame_element)
-        if isinstance(frame_element, VideoEndBreakElement):
-            video_server.stop_server()
-            break
         if show_in_web:
+            if isinstance(frame_element, VideoEndBreakElement):
+                video_server.stop_server()
+                break
             video_server.update_image(frame_element.frame_result)
         ts2 = time()
         if PRINT_PROFILE_INFO:

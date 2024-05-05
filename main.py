@@ -39,10 +39,6 @@ def main(config) -> None:
 
     for frame_element in video_reader.process():
 
-        if isinstance(frame_element, VideoEndBreakElement):
-            video_server.stop_server()
-            break # Обрывание обработки при окончании стрима
-
         frame_element = detection_node.process(frame_element)
         frame_element = tracker_info_update_node.process(frame_element)
         frame_element = calc_statistics_node.process(frame_element)
@@ -56,6 +52,9 @@ def main(config) -> None:
             video_saver_node.process(frame_element)
 
         if show_in_web:
+            if isinstance(frame_element, VideoEndBreakElement):
+                video_server.stop_server()
+                break # Обрывание обработки при окончании стрима
             video_server.update_image(frame_element.frame_result)
 
 
