@@ -47,7 +47,7 @@ class VideoServer(object):
         self._frame = image
 
     def run(self):
-        self.app_thread = Thread(target=self.app.run, args=(self.host_ip, self.port))
+        self.app_thread = Thread(target=self.app.run, daemon=True, args=(self.host_ip, self.port))
         self.app_thread.start()
 
     def stop_server(self):
