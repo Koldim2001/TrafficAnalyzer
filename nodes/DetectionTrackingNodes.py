@@ -16,8 +16,7 @@ class DetectionTrackingNodes:
         print(f'Детекция будет производиться на {device}')
 
         config_yolo = config["detection_node"]
-        self.model = YOLO(config_yolo["weight_pth"])
-        self.model.fuse()
+        self.model = YOLO(config_yolo["weight_pth"], task='detect')
         self.classes = self.model.names
         self.conf = config_yolo["confidence"]
         self.iou = config_yolo["iou"]

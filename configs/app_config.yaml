@@ -38,7 +38,7 @@ video_reader:
 
 
 detection_node:
-  weight_pth: weights/yolov8m.pt
+  weight_pth: weights/yolov8m.pt  # Путь до модели .pt или .engine (TensorRT)
   classes_to_detect: [2,3,5,7]  # весь транспорт из классов COCO
   confidence: 0.10  # Порог уверенности детектора (чем больше значение, тем меньше находит)
   iou: 0.7  # Порог NMS (чем больше значение, тем больше находит)

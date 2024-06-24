@@ -3,7 +3,7 @@ __pycache__
 drafts
 logs
 **.mp4
-**.ipynb
+**.engine
 videos_out
 test_videos
 test.ipynb
@@ -13,3 +13,4 @@ Dockerfile
 web.py
 **env**
 Dockerfile
+test.ipynb
