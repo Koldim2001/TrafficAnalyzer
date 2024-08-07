@@ -18,7 +18,9 @@ class VideoReader:
         self.video_pth = config["src"]
         self.video_source = f"Processing of {self.video_pth}"
         assert (
-            os.path.isfile(self.video_pth) or type(self.video_pth) == int
+            os.path.isfile(self.video_pth)
+            or type(self.video_pth) == int
+            or "://" in self.video_pth
         ), f"VideoReader| Файл {self.video_pth} не найден"
 
         self.stream = cv2.VideoCapture(self.video_pth)
@@ -58,7 +60,7 @@ class VideoReader:
                 break
 
             # Вычисление timestamp в случае если вытягиваем с видоса или камеры (стартуем с 0 сек)
-            if type(self.video_pth) == int:
+            if type(self.video_pth) == int or "://" in self.video_pth:
                 # с камеры:
                 if frame_number == 0:
                     self.first_timestamp = time.time()
