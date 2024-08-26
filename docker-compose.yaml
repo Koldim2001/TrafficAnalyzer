@@ -13,6 +13,8 @@ services:
       - "5488:5432"
     volumes:
       - ./services/pg_data_wh:/var/lib/postgresql/data
+    networks:
+      - prod_network
 
   pg_grafana:
     container_name: pg_grafana
@@ -26,6 +28,8 @@ services:
       - "5499:5432"
     volumes:
       - ./services/pg_grafana:/var/lib/postgresql/data
+    networks:
+      - prod_network
 
   grafana:
     container_name: grafana
@@ -48,8 +52,14 @@ services:
       - "3111:3000"
     volumes:
       - ./services/grafana:/var/lib/grafana
+    networks:
+      - prod_network
 
 volumes:
   pg_data_wh:
   pg_grafana:
   grafana:
+
+  networks:
+  prod_network:
+    driver: bridge
