@@ -60,6 +60,6 @@ volumes:
   pg_grafana:
   grafana:
 
-  networks:
+networks:
   prod_network:
     driver: bridge
