@@ -14,6 +14,7 @@ class SendInfoDBNode:
 
     def __init__(self, config: dict) -> None:
         config_db = config["send_info_db_node"]
+        self.drop_table = config_db["drop_table"]
         self.how_often_add_info = config_db["how_often_add_info"]
         self.table_name = config_db["table_name"]
         self.last_db_update = time.time()
@@ -29,8 +30,8 @@ class SendInfoDBNode:
         }
 
         self.buffer_analytics_sec = (
-            config["general"]["buffer_analytics"] * 60 +
-            config["general"]["min_time_life_track"]
+            config["general"]["buffer_analytics"] * 60
+            + config["general"]["min_time_life_track"]
         )  # столько по времени буфер набирается и информацию о статистеке выводить рано
 
         # Подключение к базе данных
@@ -46,18 +47,17 @@ class SendInfoDBNode:
         # SQL-запрос для удаления таблицы, если она уже существует
         drop_table_query = f"DROP TABLE IF EXISTS {self.table_name};"
 
-        # Удаление таблицы, если она уже существует
-        try:
-            self.cursor.execute(drop_table_query)
-            self.connection.commit()
-        except (Exception, psycopg2.Error) as error:
-            logger.error(
-                f"Error while dropping table:: {error}"
-            ) 
+        if self.drop_table:
+            # Удаление таблицы, если она уже существует
+            try:
+                self.cursor.execute(drop_table_query)
+                self.connection.commit()
+            except (Exception, psycopg2.Error) as error:
+                logger.error(f"Error while dropping table:: {error}")
 
         # SQL-запрос для создания таблицы
         create_table_query = f"""
-        CREATE TABLE {self.table_name} (
+            CREATE TABLE IF NOT EXISTS {self.table_name} (
             id SERIAL PRIMARY KEY,
             timestamp INTEGER,
             timestamp_date TIMESTAMP,
@@ -74,15 +74,11 @@ class SendInfoDBNode:
         try:
             self.cursor.execute(create_table_query)
             self.connection.commit()
-            logger.info(
-                f"Table {self.table_name} created successfully"
-            ) 
+            logger.info(f"Table {self.table_name} created successfully")
         except (Exception, psycopg2.Error) as error:
-            logger.error(
-                f"Error while creating table: {error}"
-            )   
+            logger.error(f"Error while creating table: {error}")
 
-    @profile_time 
+    @profile_time
     def process(self, frame_element: FrameElement) -> FrameElement:
         # Выйти из обработки если это пришел VideoEndBreakElement а не FrameElement
         if isinstance(frame_element, VideoEndBreakElement):
@@ -107,7 +103,9 @@ class SendInfoDBNode:
 
         return frame_element
 
-    def _insert_in_db(self, info_dictionary: dict, timestamp: float, timestamp_date: float) -> None:
+    def _insert_in_db(
+        self, info_dictionary: dict, timestamp: float, timestamp_date: float
+    ) -> None:
         # Формирование и выполнение SQL-запроса для вставки данных в бд
         insert_query = (
             f"INSERT INTO {self.table_name} "
@@ -149,10 +147,6 @@ class SendInfoDBNode:
                 ),
             )
             self.connection.commit()
-            logger.info(
-                f"Successfully inserted data into PostgreSQL"
-            )   
+            logger.info(f"Successfully inserted data into PostgreSQL")
         except (Exception, psycopg2.Error) as error:
-            logger.error(
-                f"Error while inserting data into PostgreSQL: {error}"
-            )   
+            logger.error(f"Error while inserting data into PostgreSQL: {error}")
