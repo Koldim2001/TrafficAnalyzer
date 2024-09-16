@@ -74,7 +74,6 @@ def proc_show_node(queue_in: Queue, config: dict):
         video_saver_node = VideoSaverNode(config["video_saver_node"])
     if show_in_web:
         video_server_node = VideoServer(config)
-        video_server_node.run()
     while True:
         ts0 = time()
         frame_element = queue_in.get()
@@ -84,7 +83,6 @@ def proc_show_node(queue_in: Queue, config: dict):
             video_saver_node.process(frame_element)
         if show_in_web:
             if isinstance(frame_element, VideoEndBreakElement):
-                video_server_node.stop_server()
                 break
             video_server_node.update_image(frame_element.frame_result)
         ts2 = time()
@@ -96,7 +94,7 @@ def proc_show_node(queue_in: Queue, config: dict):
                 + f"put {(time()-ts2) * 1000:.0f}"
             )
         if isinstance(frame_element, VideoEndBreakElement):
-                break
+            break
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
