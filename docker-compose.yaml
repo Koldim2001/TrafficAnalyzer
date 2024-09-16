@@ -1,11 +1,12 @@
 version: '3.8'
+
 services:
 
   backend_traffic_analyzer:
     build: .
     restart: always
     container_name: backend_traffic_analyzer
-    command: python main.py
+    command: python main_optimized.py
     volumes:
     - .:/app
     ports:

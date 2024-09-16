@@ -13,3 +13,4 @@ web.py
 **env**
 test.ipynb
 *.onnx
+.env
