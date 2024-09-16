@@ -6,7 +6,7 @@
 
 ## Установка:
 ```
-docker-compose -p traffic_analyzer up -d
+docker-compose -p traffic_analyzer up -d --build
 ```
 ## Работа с программой:
 Перед запуском необходимо в файле __configs/app_config.yaml__ указать все желаемые параметры. Далее можно запускать код.

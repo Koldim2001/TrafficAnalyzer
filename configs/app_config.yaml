@@ -13,8 +13,8 @@ hydra:
 
 pipeline:
   save_video : False  # Сохранение итогового видео обработки
-  send_info_db: False  # Сохраняем ли инфо в бд (требуется заранее запустить микросервисы если ставите True)
-  show_in_web: False  # Отображение результатов обработки видеопотока в веб-интерфейсе (Flask) вместо cv2.imshow
+  send_info_db: True  # Сохраняем ли инфо в бд (требуется заранее запустить микросервисы если ставите True)
+  show_in_web: True  # Отображение результатов обработки видеопотока в веб-интерфейсе (Flask) вместо cv2.imshow
   
 #--------------------------------------------------GENERAL--------------------------------------------------
 
@@ -55,7 +55,7 @@ tracking_node:
 
 show_node:
   scale : 0.6  # Масштабирование итогового окна результатов при imshow=True
-  imshow: True  # Нужно ли выводить видео в процессе обработки
+  imshow: False  # Нужно ли выводить видео в процессе обработки
   fps_counter_N_frames_stat : 15  # Окно усредения fsp счетчика
   draw_fps_info : True  # Указывать ли fps обработки
   show_roi: True  # Показывать ли регионы примыкающих дорог 
@@ -78,7 +78,7 @@ send_info_db_node:
     user: user
     password: pwd
     host: pg_data_wh
-    port: 4532  # порт контейнера с PostgreSQL
+    port: 5432 # порт контейнера с PostgreSQL
     database: traffic_analyzer_db
 
 
