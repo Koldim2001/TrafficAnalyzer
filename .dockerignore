@@ -4,3 +4,5 @@ docker-compose.yaml
 README.md
 test_videos/videos_out
 test_videos/videos_extra
+secrets.txt
+services

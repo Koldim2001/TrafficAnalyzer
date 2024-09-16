@@ -29,6 +29,7 @@ class VideoServer(object):
         self.port = config_server["port"]
         self.index_page = config_server["index_page"]
         self._frame = np.zeros(shape=(640, 480), dtype=np.uint8)
+        self.run()
 
     def _index(self) -> str:
         return render_template(self.index_page)

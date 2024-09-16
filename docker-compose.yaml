@@ -12,8 +12,6 @@ services:
       - ROADS_JSON=configs/entry_exit_lanes.json
       - TABLE_NAME=traffic_info
       - DROP_TABLE=True
-      - USER_DB=user
-      - PASSWORD_DB=pwd
     volumes:
       - .:/app
     ports:
@@ -27,29 +25,27 @@ services:
               capabilities: [gpu]
     networks:
       - prod_network
+    env_file: 
+      - secrets.txt
 
   pg_data_wh:
     container_name: pg_data_wh
     image: postgres:15
     restart: always
-    environment:
-      POSTGRES_DB: traffic_analyzer_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pwd
     ports:
       - "5488:5432"
     volumes:
       - ./services/pg_data_wh:/var/lib/postgresql/data
     networks:
       - prod_network
+    env_file: 
+      - secrets.txt
 
   grafana:
     container_name: grafana_building
     image: grafana/grafana:latest
     environment:
       TZ: "Europe/Moscow"
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
       GF_ALLOW_EMBEDDING: true
       GF_PANELS_DISABLE_SANITIZE_HTML: true
     restart: unless-stopped
@@ -59,6 +55,8 @@ services:
       - ./services/grafana:/var/lib/grafana
     networks:
       - prod_network
+    env_file: 
+      - secrets.txt
 
 volumes:
   pg_data_wh:

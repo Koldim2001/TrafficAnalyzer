@@ -75,11 +75,11 @@ send_info_db_node:
   how_often_add_info: 5  # как часто добавлять новую информацию (раз в столько секунд)
   table_name: ${oc.env:TABLE_NAME}  # имя таблицы в БД в которую ведем запись
   connection_info:  # данные о подключении (должны совпадать со значениями из docker-compose файла)
-    user: ${oc.env:USER_DB}
-    password: ${oc.env:PASSWORD_DB}
+    user: ${oc.env:POSTGRES_USER}
+    password: ${oc.env:POSTGRES_PASSWORD}
     host: pg_data_wh
     port: 5432 # порт контейнера с PostgreSQL
-    database: traffic_analyzer_db
+    database: ${oc.env:POSTGRES_DB}
 
 
 video_server_node: 

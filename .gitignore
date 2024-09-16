@@ -7,9 +7,12 @@ logs
 videos_out
 test_videos
 test.ipynb
-services
 myenv
 web.py
 **env**
 test.ipynb
 .env
+secrets.txt
+services/pg_data_wh
+services/grafana/alerting/1
+services/grafana/plugins

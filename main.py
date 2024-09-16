@@ -30,7 +30,6 @@ def main(config) -> None:
 
     if show_in_web:
         video_server_node = VideoServer(config)
-        video_server_node.run()
 
     for frame_element in video_reader.process():
 

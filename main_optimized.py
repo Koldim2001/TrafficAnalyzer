@@ -74,7 +74,6 @@ def proc_show_node(queue_in: Queue, config: dict):
         video_saver_node = VideoSaverNode(config["video_saver_node"])
     if show_in_web:
         video_server_node = VideoServer(config)
-        video_server_node.run()
     while True:
         ts0 = time()
         frame_element = queue_in.get()

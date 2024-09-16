@@ -8,6 +8,16 @@
 ```
 docker-compose -p traffic_analyzer up -d --build
 ```
+
+Необходимо в главной директории создать файл с переменными окружения, которые будут прокинуты во все контейнеры. Для этого создайте файл `secrets.txt` и положите подобный текст с паролями:
+```
+POSTGRES_DB=traffic_analyzer_db
+POSTGRES_USER=user
+POSTGRES_PASSWORD=pwd
+GF_SECURITY_ADMIN_USER=admin
+GF_SECURITY_ADMIN_PASSWORD=admin
+```
+
 ## Работа с программой:
 Перед запуском необходимо в файле __configs/app_config.yaml__ указать все желаемые параметры. Далее можно запускать код.
 
