@@ -9,8 +9,6 @@ test_videos
 test.ipynb
 services
 myenv
-Dockerfile
 web.py
 **env**
-Dockerfile
 test.ipynb

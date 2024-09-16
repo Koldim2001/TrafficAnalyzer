@@ -77,14 +77,14 @@ send_info_db_node:
   connection_info:  # данные о подключении (должны совпадать со значениями из docker-compose файла)
     user: user
     password: pwd
-    host: localhost
-    port: 5488  # внешний порт контейнера с PostgreSQL
+    host: pg_data_wh
+    port: 4532  # порт контейнера с PostgreSQL
     database: traffic_analyzer_db
 
 
 video_server_node: 
   index_page: index.html  
-  host_ip: localhost  # где именно поднять сервис (localhost или "0.0.0.0")
+  host_ip: 0.0.0.0  # где именно поднять сервис (localhost или "0.0.0.0")
   port: 8100  # На каком порту поднять
   template_folder: ../utils_local/templates  # Путь до templates (там где html файл)
 

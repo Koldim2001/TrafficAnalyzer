@@ -84,7 +84,6 @@ def proc_show_node(queue_in: Queue, config: dict):
             video_saver_node.process(frame_element)
         if show_in_web:
             if isinstance(frame_element, VideoEndBreakElement):
-                video_server_node.stop_server()
                 break
             video_server_node.update_image(frame_element.frame_result)
         ts2 = time()
