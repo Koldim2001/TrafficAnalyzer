@@ -52,6 +52,7 @@ class SendInfoDBNode:
             try:
                 self.cursor.execute(drop_table_query)
                 self.connection.commit()
+                logger.info(f"The table has been deleted")
             except (Exception, psycopg2.Error) as error:
                 logger.error(f"Error while dropping table:: {error}")
 

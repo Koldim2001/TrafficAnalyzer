@@ -7,8 +7,15 @@ services:
     restart: always
     container_name: backend_traffic_analyzer
     command: python main_optimized.py
+    environment:
+      - VIDEO_SRC=test_videos/test_video.mp4
+      - ROADS_JSON=configs/entry_exit_lanes.json
+      - TABLE_NAME=traffic_info
+      - DROP_TABLE=True
+      - USER_DB=user
+      - PASSWORD_DB=pwd
     volumes:
-    - .:/app
+      - .:/app
     ports:
       - "8100:8100"
     deploy:
@@ -36,38 +43,16 @@ services:
     networks:
       - prod_network
 
-  pg_grafana:
-    container_name: pg_grafana
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_DB: my_grafana_db
-      POSTGRES_USER: my_grafana_user
-      POSTGRES_PASSWORD: my_grafana_pwd
-    ports:
-      - "5499:5432"
-    volumes:
-      - ./services/pg_grafana:/var/lib/postgresql/data
-    networks:
-      - prod_network
-
   grafana:
-    container_name: grafana
+    container_name: grafana_building
     image: grafana/grafana:latest
     environment:
-      GF_DATABASE_TYPE: postgres
-      GF_DATABASE_HOST: pg_grafana
-      GF_DATABASE_NAME: my_grafana_db
-      GF_DATABASE_USER: my_grafana_user
-      GF_DATABASE_PASSWORD: my_grafana_pwd
-      GF_DATABASE_SSL_MODE: disable
+      TZ: "Europe/Moscow"
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
       GF_ALLOW_EMBEDDING: true
       GF_PANELS_DISABLE_SANITIZE_HTML: true
     restart: unless-stopped
-    depends_on:
-      - pg_grafana
     ports:
       - "3111:3000"
     volumes:

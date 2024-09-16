@@ -32,9 +32,9 @@ general:
 # ------------------------------------------------- NODES --------------------------------------------------
 
 video_reader:
-  src: test_videos/test_video.mp4 # путь до файла обработки или номер камеры (int) или ссылки на m3u8 / rtsp поток
+  src: ${oc.env:VIDEO_SRC} # путь до файла обработки или номер камеры (int) или ссылки на m3u8 / rtsp поток
   skip_secs : 0  # считываем кадры раз в <skip_secs> секунд
-  roads_info: configs/entry_exit_lanes.json  # json файл с координатами дорог на видео
+  roads_info: ${oc.env:ROADS_JSON} # json файл с координатами дорог на видео
 
 
 detection_node:
@@ -71,12 +71,12 @@ video_saver_node:
 
 
 send_info_db_node:
-  drop_table: True  # Нужно ли полностью очищать бд при повторном перезапуске приложения (полезно при тестированиях)
+  drop_table: ${oc.decode:${oc.env:DROP_TABLE}}  # Нужно ли полностью очищать бд при повторном перезапуске приложения (полезно при тестированиях)
   how_often_add_info: 5  # как часто добавлять новую информацию (раз в столько секунд)
-  table_name: traffic_info  # имя таблицы в БД в которую ведем запись
+  table_name: ${oc.env:TABLE_NAME}  # имя таблицы в БД в которую ведем запись
   connection_info:  # данные о подключении (должны совпадать со значениями из docker-compose файла)
-    user: user
-    password: pwd
+    user: ${oc.env:USER_DB}
+    password: ${oc.env:PASSWORD_DB}
     host: pg_data_wh
     port: 5432 # порт контейнера с PostgreSQL
     database: traffic_analyzer_db

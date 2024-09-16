@@ -2,3 +2,5 @@ docker-compose.yaml
 .gitignore
 .env
 README.md
+test_videos/videos_out
+test_videos/videos_extra
