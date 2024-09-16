@@ -28,7 +28,9 @@ class VideoServer(object):
         self.host_ip = config_server["host_ip"]
         self.port = config_server["port"]
         self.index_page = config_server["index_page"]
-        self._frame = np.zeros(shape=(640, 480), dtype=np.uint8)
+        self.output_size = config_server["output_size"]
+
+        self._frame = np.zeros(shape=(self.output_size[1], self.output_size[0]), dtype=np.uint8)
         self.run()
 
     def _index(self) -> str:
@@ -45,7 +47,7 @@ class VideoServer(object):
         return Response(self._gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
     
     def update_image(self, image: np.array):
-        self._frame = image
+        self._frame = cv2.resize(image, self.output_size)
 
     def run(self):
         self.app_thread = Thread(target=self.app.run, daemon=True, args=(self.host_ip, self.port))

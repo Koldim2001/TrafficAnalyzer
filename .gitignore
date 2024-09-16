@@ -2,10 +2,9 @@ __pycache__
 .ipynb_checkpoints
 drafts
 logs
-**.mp4
+test_videos/videos_extra
 **.engine
 videos_out
-test_videos
 test.ipynb
 myenv
 web.py

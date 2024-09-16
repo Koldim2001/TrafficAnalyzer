@@ -11,7 +11,7 @@ services:
       - VIDEO_SRC=test_videos/test_video.mp4
       - ROADS_JSON=configs/entry_exit_lanes.json
       - TABLE_NAME=traffic_info
-      - DROP_TABLE=True
+      - DROP_TABLE=False
     volumes:
       - .:/app
     ports:

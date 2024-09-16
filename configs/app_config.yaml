@@ -62,7 +62,7 @@ show_node:
   overlay_transparent_mask: False # Заливка регионов при show_roi=True (медленная операция)
   show_only_yolo_detections : False  # Отображать лишь результаты детекции без учета трекинга и прочей логики кода
   show_track_id_different_colors: False  # Отображать цвет бокса согласно id трека, а не логике прибытия объекта
-  show_info_statistics: True  # Вывод информации о статистике в отдельном окне справа от кадра
+  show_info_statistics: False  # Вывод информации о статистике в отдельном окне справа от кадра
 
 
 video_saver_node:
@@ -87,4 +87,4 @@ video_server_node:
   host_ip: 0.0.0.0  # где именно поднять сервис (localhost или "0.0.0.0")
   port: 8100  # На каком порту поднять
   template_folder: ../utils_local/templates  # Путь до templates (там где html файл)
-
+  output_size : [800, 470]  # ресайз для отображения в flask
