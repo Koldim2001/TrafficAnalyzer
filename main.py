@@ -48,7 +48,6 @@ def main(config) -> None:
 
         if show_in_web:
             if isinstance(frame_element, VideoEndBreakElement):
-                video_server_node.stop_server()
                 break # Обрывание обработки при окончании стрима
             video_server_node.update_image(frame_element.frame_result)
 
