@@ -2,20 +2,18 @@ version: '3.8'
 
 services:
 
-  backend_traffic_analyzer:
+  traffic_analyzer_camera_1:
     build: .
     restart: always
-    container_name: backend_traffic_analyzer
+    container_name: traffic_analyzer_camera_1
     command: python main_optimized.py
     environment:
       - VIDEO_SRC=test_videos/test_video.mp4
       - ROADS_JSON=configs/entry_exit_lanes.json
-      - TABLE_NAME=traffic_info
+      - TABLE_NAME=traffic_info_1
       - DROP_TABLE=False
     volumes:
       - .:/app
-    ports:
-      - "8100:8100"
     deploy:
       resources:
         reservations:
@@ -27,6 +25,41 @@ services:
       - prod_network
     env_file: 
       - secrets.txt
+
+  traffic_analyzer_camera_2:
+    build: .
+    restart: always
+    container_name: traffic_analyzer_camera_2
+    command: python main_optimized.py
+    environment:
+      - VIDEO_SRC=test_videos/longer_example.mp4
+      - ROADS_JSON=configs/entry_exit_lanes.json
+      - TABLE_NAME=traffic_info_2
+      - DROP_TABLE=False
+    volumes:
+      - .:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - prod_network
+    env_file: 
+      - secrets.txt
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf 
+    ports:
+      - 8009:8009
+    networks:
+      - prod_network
 
   pg_data_wh:
     container_name: pg_data_wh
