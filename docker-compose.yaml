@@ -4,6 +4,7 @@ services:
 
   traffic_analyzer_camera_1:
     build: .
+    image: traffic_analyzer/traffic_analyzer_triton:latest 
     restart: always
     container_name: traffic_analyzer_camera_1
     command: python main_optimized.py
@@ -14,20 +15,16 @@ services:
       - DROP_TABLE=False
     volumes:
       - .:/app
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      - ./configs:/app/configs
+      - ./weights:/app/weights
+      - ./test_videos:/app/test_videos
     networks:
       - prod_network
     env_file: 
       - secrets.txt
 
   traffic_analyzer_camera_2:
-    build: .
+    image: traffic_analyzer/traffic_analyzer_triton:latest 
     restart: always
     container_name: traffic_analyzer_camera_2
     command: python main_optimized.py
@@ -38,13 +35,9 @@ services:
       - DROP_TABLE=False
     volumes:
       - .:/app
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      - ./configs:/app/configs
+      - ./weights:/app/weights
+      - ./test_videos:/app/test_videos
     networks:
       - prod_network
     env_file: 

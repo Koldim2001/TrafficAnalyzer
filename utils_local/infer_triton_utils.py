@@ -9,7 +9,7 @@ def infer_triton_yolo(
     triton_model_name,
     image_bgr,
     imgsz,
-    classes,
+    classes_list,
     conf,
     iou,
     input_name="images",
@@ -37,7 +37,8 @@ def infer_triton_yolo(
         classes_scores = detection[4:]
         cls_indx = int(np.argmax(classes_scores))
         confidence = classes_scores[cls_indx]
-        if confidence > conf and cls_indx in classes:
+
+        if confidence > conf and (cls_indx in classes_list):
             center_x = detection[0]
             center_y = detection[1]
             width = detection[2]
@@ -57,7 +58,7 @@ def infer_triton_yolo(
 
     # Фильтрация боксов, классов и доверий по индексам из NMS
     filtered_bboxes = [bboxes[i] for i in indeces]
-    filtered_classes = [classes_list[i] for i in indeces]
+    filtered_classes = [classes[i] for i in indeces]
     filtered_confs = [confs[i] for i in indeces]
 
     return filtered_bboxes, filtered_classes, filtered_confs
