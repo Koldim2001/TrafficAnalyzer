@@ -71,3 +71,78 @@ def intersects_central_point(tracked_xyxy, polygons):
         if polygon.contains(center_point):
             return int(key)
     return None
+
+
+def box_iou(box1, box2):
+    x1 = max(box1[0], box2[0])
+    y1 = max(box1[1], box2[1])
+    x2 = min(box1[2], box2[2])
+    y2 = min(box1[3], box2[3])
+
+    inter_area = max(0, x2 - x1) * max(0, y2 - y1)
+    box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
+    union_area = box1_area + box2_area - inter_area
+    iou = inter_area / union_area if union_area > 0 else 0
+    return iou
+
+
+def agnostic_nms(boxes, confidences, iou_threshold=0.5):
+    """Agnostic Non-Maximum Suppression."""
+    boxes = np.array(boxes)
+    confidences = np.array(confidences)
+    indices = np.argsort(confidences)[::-1]
+
+    selected_indices = []
+
+    while len(indices) > 0:
+        current_index = indices[0]
+        selected_indices.append(current_index)
+        iou = np.array([box_iou(boxes[current_index], boxes[i]) for i in indices[1:]])
+        indices = indices[np.where(iou <= iou_threshold)[0] + 1]
+
+    return selected_indices
+
+
+def non_agnostic_nms(boxes, confidences, classes, iou_threshold=0.5):
+    """Non-Agnostic Non-Maximum Suppression with class consideration."""
+    boxes = np.array(boxes)
+    confidences = np.array(confidences)
+    classes = np.array(classes)
+    indices = np.argsort(confidences)[::-1]
+
+    selected_indices = []
+
+    while len(indices) > 0:
+        current_index = indices[0]
+        selected_indices.append(current_index)
+        current_class = classes[current_index]
+        iou = np.array([box_iou(boxes[current_index], boxes[i]) for i in indices])
+        class_mask = classes[indices] == current_class
+        indices = indices[np.where(np.logical_or(iou <= iou_threshold, ~class_mask))[0]]
+
+    return selected_indices
+
+
+def select_nms(boxes, confidences, classes=None, iou_threshold=0.5, agnostic=True):
+    """Select between Agnostic and Non-Agnostic NMS."""
+    if agnostic:
+        return agnostic_nms(boxes, confidences, iou_threshold)
+    else:
+        if classes is None:
+            raise ValueError("Classes must be provided for non-agnostic NMS.")
+        return non_agnostic_nms(boxes, confidences, classes, iou_threshold)
+
+
+def letterbox_resize(image, target_size):
+    original_height, original_width = image.shape[:2]
+    target_width, target_height = target_size
+    ratio = min(target_width / original_width, target_height / original_height)
+    new_width = int(original_width * ratio)
+    new_height = int(original_height * ratio)
+    resized_image = cv2.resize(image, (new_width, new_height))
+    canvas = np.zeros((target_height, target_width, 3), dtype=np.uint8)
+    x_offset = (target_width - new_width) // 2
+    y_offset = (target_height - new_height) // 2
+    canvas[y_offset : y_offset + new_height, x_offset : x_offset + new_width] = resized_image
+    return canvas, y_offset

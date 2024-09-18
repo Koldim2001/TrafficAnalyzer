@@ -61,6 +61,18 @@ services:
     networks:
       - prod_network
 
+  triton:
+    container_name: triton
+    build:
+      context: ./services/triton
+      dockerfile: Dockerfile
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
   pg_data_wh:
     container_name: pg_data_wh
     image: postgres:15
@@ -75,7 +87,7 @@ services:
       - secrets.txt
 
   grafana:
-    container_name: grafana_building
+    container_name: grafana_traffic
     image: grafana/grafana:latest
     environment:
       TZ: "Europe/Moscow"
