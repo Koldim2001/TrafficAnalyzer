@@ -1,5 +1,5 @@
 import numpy as np
-import tritonclient.http as httpclient
+import tritonclient.grpc as grpcclient
 import cv2
 from utils_local.utils import *
 
@@ -23,9 +23,9 @@ def infer_triton_yolo(
     image = np.transpose(image, (2, 0, 1))  # Convert to CHW format
     image = np.expand_dims(image, axis=0)
 
-    inputs = [httpclient.InferInput(input_name, image.shape, "FP32")]
+    inputs = [grpcclient.InferInput(input_name, image.shape, "FP32")]
     inputs[0].set_data_from_numpy(image)
-    outputs = [httpclient.InferRequestedOutput(output_name)]
+    outputs = [grpcclient.InferRequestedOutput(output_name)]
     output = triton_client.infer(triton_model_name, inputs, outputs=outputs)
     output = output.as_numpy(output_name)[0].T
 
@@ -54,7 +54,7 @@ def infer_triton_yolo(
             confs.append(confidence)
 
     # Применение NMS
-    indeces = select_nms(bboxes, confs, classes, iou_threshold=iou, agnostic=False)
+    indeces = select_nms(bboxes, confs, classes, iou_threshold=iou, agnostic=True)
 
     # Фильтрация боксов, классов и доверий по индексам из NMS
     filtered_bboxes = [bboxes[i] for i in indeces]

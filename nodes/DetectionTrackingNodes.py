@@ -5,7 +5,7 @@ from utils_local.utils import profile_time
 from elements.FrameElement import FrameElement
 from elements.VideoEndBreakElement import VideoEndBreakElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
-import tritonclient.http as httpclient
+import tritonclient.grpc as grpcclient
 from utils_local.infer_triton_utils import infer_triton_yolo
 
 
@@ -18,7 +18,7 @@ class DetectionTrackingNodes:
 
         config_yolo = config["detection_node"]
 
-        self.triton_client_yolo = httpclient.InferenceServerClient(url=config_yolo["triton_socket"])
+        self.triton_client_yolo = grpcclient.InferenceServerClient(url=config_yolo["triton_socket"])
         self.triton_model_name_yolo = config_yolo["triton_model_name"]
 
         self.classes = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck"]
