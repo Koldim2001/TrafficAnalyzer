@@ -6,6 +6,8 @@ from utils_local.utils import profile_time
 from elements.FrameElement import FrameElement
 from elements.VideoEndBreakElement import VideoEndBreakElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
+import tritonclient.http as httpclient
+from utils_local.infer_triton_utils import infer_triton_yolo
 
 
 class DetectionTrackingNodes:
@@ -16,8 +18,11 @@ class DetectionTrackingNodes:
         print(f'Детекция будет производиться на {device}')
 
         config_yolo = config["detection_node"]
-        self.model = YOLO(config_yolo["weight_pth"], task='detect')
-        self.classes = self.model.names
+
+        self.triton_client_yolo = httpclient.InferenceServerClient(url=yolo_config["triton_socket"])
+        self.triton_model_name_yolo = self.yolo_config["triton_model_name"]
+
+        self.classes = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck"]
         self.conf = config_yolo["confidence"]
         self.iou = config_yolo["iou"]
         self.imgsz = config_yolo["imgsz"]
@@ -46,16 +51,24 @@ class DetectionTrackingNodes:
 
         frame = frame_element.frame.copy()
 
-        outputs = self.model.predict(frame, imgsz=self.imgsz, conf=self.conf, verbose=False,
-                                     iou=self.iou, classes=self.classes_to_detect)
+        frame_element.detected_xyxy, detected_cls, frame_element.detected_conf = infer_triton_yolo(
+            self.triton_client_yolo,
+            self.triton_model_name_yolo,
+            frame,
+            self.imgsz,
+            self.classes_to_detect,
+            self.conf,
+            self.iou,
+        )
 
-        frame_element.detected_conf = outputs[0].boxes.conf.cpu().tolist()
-        detected_cls = outputs[0].boxes.cls.cpu().int().tolist()
         frame_element.detected_cls = [self.classes[i] for i in detected_cls]
-        frame_element.detected_xyxy = outputs[0].boxes.xyxy.cpu().int().tolist()
 
         # Преподготовка данных на подачу в трекер
-        detections_list = self._get_results_dor_tracker(outputs)
+        detections_list = self._get_results_dor_tracker(
+            frame_element.detected_xyxy,
+            detected_cls,
+            frame_element.detected_conf
+        )
 
         # Если детекций нет, то оправляем пустой массив
         if len(detections_list) == 0:
@@ -77,27 +90,20 @@ class DetectionTrackingNodes:
 
         return frame_element
 
-    def _get_results_dor_tracker(self, results) -> np.ndarray:
+    def _get_results_for_tracker(self, filtered_bboxes, filtered_classes, filtered_confs) -> np.ndarray:
         # Приведение данных в правильную форму для трекера
         detections_list = []
-        for result in results[0]:
-            class_id = result.boxes.cls.cpu().numpy().astype(int)
+        for bbox, class_id, confidence in zip(filtered_bboxes, filtered_classes, filtered_confs):
             # трекаем те же классы что и детектируем
-            if class_id[0] in self.classes_to_detect:
-
-                bbox = result.boxes.xyxy.cpu().numpy()
-                confidence = result.boxes.conf.cpu().numpy()
-
-                class_id_value = (
-                    2  # Будем все трекуемые объекты считать классом car чтобы не было ошибок
-                )
+            if class_id in self.classes_to_detect:
+                class_id_value = 2  # Будем все трекуемые объекты считать классом car чтобы не было ошибок
 
                 merged_detection = [
-                    bbox[0][0],
-                    bbox[0][1],
-                    bbox[0][2],
-                    bbox[0][3],
-                    confidence[0],
+                    bbox[0],  # x1
+                    bbox[1],  # y1
+                    bbox[2],  # x2
+                    bbox[3],  # y2
+                    confidence,
                     class_id_value,
                 ]
 

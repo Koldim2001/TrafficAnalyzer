@@ -12,7 +12,7 @@ def infer_triton_yolo(
     imgsz,
     classes,
     conf,
-    iuo,
+    iou,
     input_name="images",
     output_name="output0",
 ):
