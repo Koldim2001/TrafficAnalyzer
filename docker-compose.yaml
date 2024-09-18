@@ -4,6 +4,7 @@ services:
 
   traffic_analyzer_camera_1:
     build: .
+    image: traffic_analyzer/traffic_analyzer:latest 
     restart: always
     container_name: traffic_analyzer_camera_1
     command: python main_optimized.py
@@ -13,7 +14,9 @@ services:
       - TABLE_NAME=traffic_info_1
       - DROP_TABLE=False
     volumes:
-      - .:/app
+      - ./configs:/app/configs
+      - ./weights:/app/weights
+      - ./test_videos:/app/test_videos
     deploy:
       resources:
         reservations:
@@ -27,7 +30,7 @@ services:
       - secrets.txt
 
   traffic_analyzer_camera_2:
-    build: .
+    image: traffic_analyzer/traffic_analyzer:latest 
     restart: always
     container_name: traffic_analyzer_camera_2
     command: python main_optimized.py
@@ -37,7 +40,9 @@ services:
       - TABLE_NAME=traffic_info_2
       - DROP_TABLE=False
     volumes:
-      - .:/app
+      - ./configs:/app/configs
+      - ./weights:/app/weights
+      - ./test_videos:/app/test_videos
     deploy:
       resources:
         reservations:
