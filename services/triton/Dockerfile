@@ -1,5 +1,5 @@
 # Use the official Triton Inference Server image
-FROM nvcr.io/nvidia/tritonserver:21.09-py3
+FROM nvcr.io/nvidia/tritonserver:23.09-py3
 
 # Copy the model repository to the container
 COPY models/ /models/

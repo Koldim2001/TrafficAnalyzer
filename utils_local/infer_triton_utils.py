@@ -1,8 +1,7 @@
 import numpy as np
 import tritonclient.http as httpclient
 import cv2
-from utils_local.utils import letterbox_resize, agnostic_nms
-
+from utils_local.utils import *
 
 
 def infer_triton_yolo(
@@ -50,11 +49,11 @@ def infer_triton_yolo(
             y2 = int((center_y + height / 2 - y_offset) * scale)
 
             bboxes.append([x1, y1, x2, y2])
-            classes.append(cls)
+            classes.append(cls_indx)
             confs.append(confidence)
 
     # Применение NMS
-    indeces = select_nms(bboxes, confs, classes=classes_list, iou_threshold=iou, agnostic=False)
+    indeces = select_nms(bboxes, confs, classes, iou_threshold=iou, agnostic=False)
 
     # Фильтрация боксов, классов и доверий по индексам из NMS
     filtered_bboxes = [bboxes[i] for i in indeces]

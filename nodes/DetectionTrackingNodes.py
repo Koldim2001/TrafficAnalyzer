@@ -1,6 +1,5 @@
-from ultralytics import YOLO
-import torch
 import numpy as np
+import torch
 
 from utils_local.utils import profile_time
 from elements.FrameElement import FrameElement
@@ -14,13 +13,13 @@ class DetectionTrackingNodes:
     """Модуль инференса модели детекции + трекинг алгоритма"""
 
     def __init__(self, config) -> None:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f'Детекция будет производиться на {device}')
+        #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        #print(f'Детекция будет производиться на {device}')
 
         config_yolo = config["detection_node"]
 
-        self.triton_client_yolo = httpclient.InferenceServerClient(url=yolo_config["triton_socket"])
-        self.triton_model_name_yolo = self.yolo_config["triton_model_name"]
+        self.triton_client_yolo = httpclient.InferenceServerClient(url=config_yolo["triton_socket"])
+        self.triton_model_name_yolo = config_yolo["triton_model_name"]
 
         self.classes = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck"]
         self.conf = config_yolo["confidence"]

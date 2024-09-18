@@ -15,3 +15,4 @@ secrets.txt
 services/pg_data_wh
 services/grafana/alerting/1
 services/grafana/plugins
+services/triton/yolov8m.pt

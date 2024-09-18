@@ -66,12 +66,16 @@ services:
     build:
       context: ./services/triton
       dockerfile: Dockerfile
+    volumes:
+      - ./services/triton/models:/models
     restart: always
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
+    networks:
+      - prod_network
 
   pg_data_wh:
     container_name: pg_data_wh

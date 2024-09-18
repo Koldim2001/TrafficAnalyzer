@@ -1,6 +1,7 @@
 import logging
 import time
 import numpy as np
+import cv2
 from shapely.geometry import Point, Polygon
 
 logger_profile = logging.getLogger("profile")
