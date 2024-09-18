@@ -80,7 +80,7 @@ services:
       - secrets.txt
 
   grafana:
-    container_name: grafana_building
+    container_name: grafana_traffic
     image: grafana/grafana:latest
     environment:
       TZ: "Europe/Moscow"
