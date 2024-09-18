@@ -63,7 +63,7 @@ class DetectionTrackingNodes:
         frame_element.detected_cls = [self.classes[i] for i in detected_cls]
 
         # Преподготовка данных на подачу в трекер
-        detections_list = self._get_results_dor_tracker(
+        detections_list = self._get_results_for_tracker(
             frame_element.detected_xyxy,
             detected_cls,
             frame_element.detected_conf
