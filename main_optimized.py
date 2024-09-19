@@ -10,9 +10,8 @@ from nodes.VideoSaverNode import VideoSaverNode
 from nodes.DetectionTrackingNodes import DetectionTrackingNodes
 from nodes.TrackerInfoUpdateNode import TrackerInfoUpdateNode
 from nodes.CalcStatisticsNode import CalcStatisticsNode
-from nodes.SendInfoDBNode import SendInfoDBNode
 from nodes.FlaskServerVideoNode import VideoServer
-
+from nodes.KafkaProducerNode import KafkaProducerNode
 from elements.VideoEndBreakElement import VideoEndBreakElement
 
 PRINT_PROFILE_INFO = False
@@ -42,17 +41,17 @@ def proc_frame_reader_and_detection(queue_out: Queue, config: dict, time_sleep_s
 def proc_tracker_update_and_calc(queue_in: Queue, queue_out: Queue, config: dict):
     tracker_info_update_node = TrackerInfoUpdateNode(config)
     calc_statistics_node = CalcStatisticsNode(config)
-    send_info_db = config["pipeline"]["send_info_db"]
-    if send_info_db:
-        send_info_db_node = SendInfoDBNode(config)
+    send_info_kafka = config["pipeline"]["send_info_kafka"]
+    if send_info_kafka:
+        kafka_producer_node = KafkaProducerNode(config)
     while True:
         ts0 = time()
         frame_element = queue_in.get()
         ts1 = time()
         frame_element = tracker_info_update_node.process(frame_element)
         frame_element = calc_statistics_node.process(frame_element)
-        if send_info_db:
-            frame_element = send_info_db_node.process(frame_element)
+        if send_info_kafka:
+            frame_element = kafka_producer_node.process(frame_element)
         ts2 = time()
         queue_out.put(frame_element)
         if PRINT_PROFILE_INFO:
@@ -94,7 +93,7 @@ def proc_show_node(queue_in: Queue, config: dict):
                 + f"put {(time()-ts2) * 1000:.0f}"
             )
         if isinstance(frame_element, VideoEndBreakElement):
-                break
+            break
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")

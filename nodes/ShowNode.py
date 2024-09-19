@@ -144,7 +144,7 @@ class ShowNode:
                             (cx, cy),
                             circle_radius + 6,  # Добавляем небольшой отступ для текста
                             (200, 200, 200),
-                            -1
+                            -1,
                         )
                         # Нанесение подписи road_id в центре области
                         cv2.putText(
@@ -197,12 +197,17 @@ class ShowNode:
                 text=text_cars,
                 org=(20, y),
                 fontFace=self.fontFace,
-                fontScale=self.fontScale*1.5,
+                fontScale=self.fontScale * 1.5,
                 thickness=self.thickness,
                 color=(255, 255, 255),
             )
             # Увеличиваем y на высоту строки текста
-            y += cv2.getTextSize(text_cars, self.fontFace, self.fontScale*1.5, self.thickness)[0][1] + 25
+            y += (
+                cv2.getTextSize(text_cars, self.fontFace, self.fontScale * 1.5, self.thickness)[0][
+                    1
+                ]
+                + 25
+            )
             # Текст для заголовка
             text_info = "Traffic congestion:"
             # Выводим заголовок
@@ -211,17 +216,22 @@ class ShowNode:
                 text=text_info,
                 org=(20, y),
                 fontFace=self.fontFace,
-                fontScale=self.fontScale*1.5,
+                fontScale=self.fontScale * 1.5,
                 thickness=self.thickness,
                 color=(255, 255, 255),
             )
             # Увеличиваем y на высоту строки текста
-            y += cv2.getTextSize(text_info, self.fontFace, self.fontScale*1.5, self.thickness)[0][1] + 25
-            
+            y += (
+                cv2.getTextSize(text_info, self.fontFace, self.fontScale * 1.5, self.thickness)[0][
+                    1
+                ]
+                + 25
+            )
+
             # Проверим, что буфер уже наполнился и можно выводить статистику:
             if frame_element.timestamp >= self.buffer_analytics_sec:
                 # Выводим информацию по дорогам
-                for key, value in data_info['roads_activity'].items():
+                for key, value in data_info["roads_activity"].items():
                     text_road = f"  road {key}: {value:.1f} cars/min"
                     cv2.putText(
                         img=black_image,
@@ -236,10 +246,13 @@ class ShowNode:
                     y += (
                         cv2.getTextSize(
                             text_road, self.fontFace, self.fontScale * 1.5, self.thickness
-                        )[0][1] + 25
+                        )[0][1]
+                        + 25
                     )
             else:
-                text_to_show = f"   wait {round(self.buffer_analytics_sec - frame_element.timestamp)} sec"
+                text_to_show = (
+                    f"   wait {round(self.buffer_analytics_sec - frame_element.timestamp)} sec"
+                )
                 cv2.putText(
                     img=black_image,
                     text=text_to_show,

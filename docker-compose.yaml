@@ -1,6 +1,63 @@
 version: '3.8'
 
 services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: traffic_zookeeper
+    restart: always
+    ports:
+      #- "2181:2181"
+      - "2182:2181"
+    healthcheck:
+      test: [ "CMD", "nc", "-vz", "localhost", "2181" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - prod_network
+  kafka:
+    image: wurstmeister/kafka
+    container_name: traffic_kafka
+    restart: always
+    ports:
+      - "9094:9092"
+      - "9095:9093"
+      #- "9092:9092"
+      #- "9093:9093"
+    environment:
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://127.0.0.1:9094 #9092
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9094 #9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_HOURS: 72 # удаление сообщений через 72 часа
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
+      KAFKA_LOG_CLEANUP_POLICY: delete
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "nc", "-vz", "localhost", "9094" ] #9092
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - prod_network
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: traffic_kafdrop
+    restart: always
+    ports:
+      - "9001:9000"
+      #- "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    depends_on:
+      - kafka
+    networks:
+      - prod_network
 
   traffic_analyzer_camera_1:
     build: .
@@ -11,12 +68,17 @@ services:
     environment:
       - VIDEO_SRC=test_videos/test_video.mp4
       - ROADS_JSON=configs/entry_exit_lanes.json
+      - TOPIC_NAME=statistic_1
+      - CAMERA_ID=1
       - TABLE_NAME=traffic_info_1
       - DROP_TABLE=False
     volumes:
       - ./configs:/app/configs
       - ./weights:/app/weights
       - ./test_videos:/app/test_videos
+    depends_on:
+      kafka:
+        condition: service_healthy
     deploy:
       resources:
         reservations:
@@ -26,8 +88,6 @@ services:
               capabilities: [gpu]
     networks:
       - prod_network
-    env_file: 
-      - secrets.txt
 
   traffic_analyzer_camera_2:
     image: traffic_analyzer/traffic_analyzer:latest 
@@ -37,8 +97,13 @@ services:
     environment:
       - VIDEO_SRC=test_videos/longer_example.mp4
       - ROADS_JSON=configs/entry_exit_lanes.json
+      - TOPIC_NAME=statistic_1
+      - CAMERA_ID=2
       - TABLE_NAME=traffic_info_2
       - DROP_TABLE=False
+    depends_on:
+      kafka:
+        condition: service_healthy
     volumes:
       - ./configs:/app/configs
       - ./weights:/app/weights
@@ -52,33 +117,7 @@ services:
               capabilities: [gpu]
     networks:
       - prod_network
-    env_file: 
-      - secrets.txt
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: always
-    volumes:
-      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf 
-    ports:
-      - 8009:8009
-    networks:
-      - prod_network
-
-  pg_data_wh:
-    container_name: pg_data_wh
-    image: postgres:15
-    restart: always
-    ports:
-      - "5488:5432"
-    volumes:
-      - ./services/pg_data_wh:/var/lib/postgresql/data
-    networks:
-      - prod_network
-    env_file: 
-      - secrets.txt
-
+      
   grafana:
     container_name: grafana_traffic
     image: grafana/grafana:latest
@@ -93,14 +132,59 @@ services:
       - ./services/grafana:/var/lib/grafana
     networks:
       - prod_network
-    env_file: 
-      - secrets.txt
+
+  influxdb:
+    container_name: influxdb
+    restart: always
+    image: influxdb:1.8
+    ports:
+      - "8087:8086"
+     # - "8086:8086"
+    environment:
+      - INFLUX_DB=influx
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+      - INFLUXDB_RETENTION_POLICY_AUTOCREATE=true
+      - INFLUXDB_RETENTION_DURATION=30d
+    volumes:
+      - ./services/influxdb_data:/var/lib/influxdb
+    networks:
+      - prod_network
+
+  telegraf:
+    container_name: telegraf
+    restart: always
+    image: telegraf
+    depends_on:
+      - influxdb
+    volumes:
+      - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    links:
+      - influxdb
+    ports:
+      - "8126:8125"
+      #- "8125:8125"
+    networks:
+      - prod_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf 
+    ports:
+      - 8009:8009
+    networks:
+      - prod_network
 
 volumes:
-  pg_data_wh:
-  pg_grafana:
   grafana:
-
+  telegraf:
+  influxdb:
+  nginx:
+  traffic_analyzer_camera_1:
+  traffic_analyzer_camera_2:
 networks:
   prod_network:
     driver: bridge

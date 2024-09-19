@@ -13,9 +13,9 @@ hydra:
 
 pipeline:
   save_video : False  # Сохранение итогового видео обработки
-  send_info_db: True  # Сохраняем ли инфо в бд (требуется заранее запустить микросервисы если ставите True)
   show_in_web: True  # Отображение результатов обработки видеопотока в веб-интерфейсе (Flask) вместо cv2.imshow
-  
+  send_info_kafka: True  # Отправлять ли инфо в кафку
+
 #--------------------------------------------------GENERAL--------------------------------------------------
 
 general:
@@ -69,18 +69,11 @@ video_saver_node:
   fps : 24  # при увеличении позволяет ускорить итоговое видео
   out_folder : test_videos/videos_out  # в какую папку сохранить результат
 
-
-send_info_db_node:
-  drop_table: ${oc.decode:${oc.env:DROP_TABLE}}  # Нужно ли полностью очищать бд при повторном перезапуске приложения (полезно при тестированиях)
-  how_often_add_info: 5  # как часто добавлять новую информацию (раз в столько секунд)
-  table_name: ${oc.env:TABLE_NAME}  # имя таблицы в БД в которую ведем запись
-  connection_info:  # данные о подключении (должны совпадать со значениями из docker-compose файла)
-    user: ${oc.env:POSTGRES_USER}
-    password: ${oc.env:POSTGRES_PASSWORD}
-    host: pg_data_wh
-    port: 5432 # порт контейнера с PostgreSQL
-    database: ${oc.env:POSTGRES_DB}
-
+kafka_producer_node: #// камера id
+  bootstrap_servers: kafka:29092 #127.0.0.1:9092 #kafka:29092
+  topic_name: ${oc.env:TOPIC_NAME}
+  how_often_sec: 1 # раз в сколько секунд отправлять результат
+  camera_id: ${oc.env:CAMERA_ID}
 
 video_server_node: 
   index_page: index.html  
