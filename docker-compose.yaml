@@ -13,7 +13,9 @@ services:
       - TABLE_NAME=traffic_info
       - DROP_TABLE=False
     volumes:
-      - .:/app
+      - ./configs:/app/configs
+      - ./weights:/app/weights
+      - ./test_videos:/app/test_videos
     ports:
       - "8100:8100"
     deploy:
