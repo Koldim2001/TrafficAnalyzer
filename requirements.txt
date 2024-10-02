@@ -1,7 +1,6 @@
 ultralytics==8.2.38
 opencv-python==4.9.0.80
 shapely==2.0.3
-psycopg2-binary==2.9.9
 hydra-core==1.3.2
 Flask==3.0.3
 kafka-python==2.0.2
