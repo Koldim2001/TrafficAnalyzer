@@ -6,7 +6,6 @@ services:
     container_name: traffic_zookeeper
     restart: always
     ports:
-      #- "2181:2181"
       - "2182:2181"
     healthcheck:
       test: [ "CMD", "nc", "-vz", "localhost", "2181" ]
@@ -22,8 +21,6 @@ services:
     ports:
       - "9094:9092"
       - "9095:9093"
-      #- "9092:9092"
-      #- "9093:9093"
     environment:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://127.0.0.1:9094 #9092
@@ -51,7 +48,6 @@ services:
     restart: always
     ports:
       - "9001:9000"
-      #- "9000:9000"
     environment:
       KAFKA_BROKERCONNECT: "kafka:29092"
     depends_on:
@@ -139,7 +135,6 @@ services:
     image: influxdb:1.8
     ports:
       - "8087:8086"
-     # - "8086:8086"
     environment:
       - INFLUX_DB=influx
       - INFLUXDB_ADMIN_USER=admin
@@ -163,7 +158,6 @@ services:
       - influxdb
     ports:
       - "8126:8125"
-      #- "8125:8125"
     networks:
       - prod_network
 
