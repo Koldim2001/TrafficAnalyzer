@@ -12,7 +12,7 @@ WORKDIR /app
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install "numpy<2"
 RUN pip3 install cython_bbox==0.1.5 lap==0.4.0 
-RUN pip3 install torch==1.13.1+cu117 torchvision==0.14.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
+RUN pip3 install torch==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cu121
 
 # Сначала копируем только requirements.txt и устанавливаем зависимости
 COPY requirements.txt /app/
