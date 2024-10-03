@@ -86,8 +86,8 @@ services:
     image: grafana/grafana:latest
     environment:
       TZ: "Europe/Moscow"
-      GF_ALLOW_EMBEDDING: true
-      GF_PANELS_DISABLE_SANITIZE_HTML: true
+      GF_ALLOW_EMBEDDING: "true"
+      GF_PANELS_DISABLE_SANITIZE_HTML: "true"
     restart: unless-stopped
     ports:
       - "3111:3000"
