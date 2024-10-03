@@ -43,8 +43,8 @@ services:
       GF_DATABASE_SSL_MODE: disable
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_ALLOW_EMBEDDING: true
-      GF_PANELS_DISABLE_SANITIZE_HTML: true
+      GF_ALLOW_EMBEDDING: "true"
+      GF_PANELS_DISABLE_SANITIZE_HTML: "true"
     restart: unless-stopped
     depends_on:
       - pg_grafana
