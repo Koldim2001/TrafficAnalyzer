@@ -7,7 +7,7 @@
 ## Установка:
 Необходима версия Python >= 3.10 (лучше 3.10.14)
 ```
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install torch==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 ```
 ## Работа с программой:
