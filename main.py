@@ -19,7 +19,6 @@ def main(config) -> None:
     show_node = ShowNode(config)
 
     save_video = config["pipeline"]["save_video"]
-    send_info_db = config["pipeline"]["send_info_db"]
     show_in_web = config["pipeline"]["show_in_web"]
     send_info_kafka = config["pipeline"]["send_info_kafka"]
 
