@@ -1,16 +1,14 @@
 # Работа с сервером с GPU:
 
-## Начнем с гита:
+## Обновим пакеты и установим Git:
 ```
 sudo apt update
 sudo apt install git-all
 ```
 
-
-
-
 ---
-## Установим драйвера gpu nvidia:
+
+## Установим драйвера GPU nvidia:
 ```
 sudo apt-get install linux-headers-$(uname -r)
 ```
@@ -21,7 +19,7 @@ sudo apt-get install ubuntu-drivers-common
 ```
 ubuntu-drivers devices | grep recommended
 ```
-Установим драйвера и cuda:
+Установим драйвера и CUDA:
 ```
 sudo ubuntu-drivers autoinstall
 # либо указать напрямую: sudo apt install nvidia-driver-550 -y
@@ -33,7 +31,7 @@ sudo apt install nvidia-cuda-toolkit -y
 
 ---
 
-## Ставим докер:
+## Ставим Docker:
 
 ```
 # Add Docker's official GPG key:
@@ -62,7 +60,7 @@ sudo usermod -aG docker $USER
 ```
 
 ---
-## Docker nvidia toolkit:
+## Docker NVIDIA Container Toolkit:
 ```
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
   && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
@@ -79,8 +77,17 @@ sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
-Для тестирования работоспособности [доп ссылка](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.10.0/install-guide.html):
+Для тестирования работоспособности ([доп ссылка](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.10.0/install-guide.html)):
 ```
 docker run --rm --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi
 ```
+---
+## Portainer
+Можно еще установить Portainer для того, чтобы у Docker был UI. Это позволяет удобнее взаимодействовать с докером. После поднятия сервиса он будет работать на порту 9000.
+
+```
+docker volume create portainer_data
+docker run -d -p 8000:8000 -p 9443:9443 -p 9000:9000 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+```
+
 ---
