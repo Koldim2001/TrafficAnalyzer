@@ -66,8 +66,6 @@ services:
       - ROADS_JSON=configs/entry_exit_lanes.json
       - TOPIC_NAME=statistic_1
       - CAMERA_ID=1
-      - TABLE_NAME=traffic_info_1
-      - DROP_TABLE=False
     volumes:
       - ./configs:/app/configs
       - ./weights:/app/weights
@@ -95,8 +93,6 @@ services:
       - ROADS_JSON=configs/entry_exit_lanes.json
       - TOPIC_NAME=statistic_1
       - CAMERA_ID=2
-      - TABLE_NAME=traffic_info_2
-      - DROP_TABLE=False
     depends_on:
       kafka:
         condition: service_healthy

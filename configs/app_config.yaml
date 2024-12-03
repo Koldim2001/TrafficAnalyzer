@@ -69,11 +69,13 @@ video_saver_node:
   fps : 24  # при увеличении позволяет ускорить итоговое видео
   out_folder : test_videos/videos_out  # в какую папку сохранить результат
 
+
 kafka_producer_node: #// камера id
   bootstrap_servers: kafka:29092 #127.0.0.1:9092 #kafka:29092
   topic_name: ${oc.env:TOPIC_NAME}
   how_often_sec: 1 # раз в сколько секунд отправлять результат
   camera_id: ${oc.env:CAMERA_ID}
+
 
 video_server_node: 
   index_page: index.html  
