@@ -14,6 +14,7 @@ services:
       retries: 10
     networks:
       - prod_network
+
   kafka:
     image: wurstmeister/kafka
     container_name: traffic_kafka
@@ -42,14 +43,15 @@ services:
     networks:
       - prod_network
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    container_name: traffic_kafdrop
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: traffic_kafka_ui
     restart: always
     ports:
-      - "9001:9000"
+      - "9001:8080"
     environment:
-      KAFKA_BROKERCONNECT: "kafka:29092"
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:29092"
     depends_on:
       - kafka
     networks:
@@ -175,6 +177,7 @@ volumes:
   nginx:
   traffic_analyzer_camera_1:
   traffic_analyzer_camera_2:
+
 networks:
   prod_network:
     driver: bridge
