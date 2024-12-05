@@ -170,14 +170,6 @@ services:
     networks:
       - prod_network
 
-volumes:
-  grafana:
-  telegraf:
-  influxdb:
-  nginx:
-  traffic_analyzer_camera_1:
-  traffic_analyzer_camera_2:
-
 networks:
   prod_network:
     driver: bridge
