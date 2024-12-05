@@ -60,11 +60,6 @@ services:
     env_file: 
       - secrets.txt
 
-volumes:
-  pg_data_wh:
-  pg_grafana:
-  grafana:
-
 networks:
   prod_network:
     driver: bridge
