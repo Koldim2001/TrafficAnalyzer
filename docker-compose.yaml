@@ -24,8 +24,8 @@ services:
       - "9095:9093"
     environment:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://127.0.0.1:9094 #9092
-      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9094 #9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://127.0.0.1:9092
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
@@ -36,7 +36,7 @@ services:
       zookeeper:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD", "nc", "-vz", "localhost", "9094" ] #9092
+      test: [ "CMD", "nc", "-vz", "localhost", "9092" ]
       interval: 10s
       timeout: 5s
       retries: 10
