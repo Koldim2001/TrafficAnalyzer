@@ -56,10 +56,16 @@ def proc_proceessor(queue_in: Queue, config: dict, frame_process: Process):
     while True:
 
         if not frame_process.is_alive():
+            print("rendering_process is died, stopping analytics_process")
             break
 
         ts0 = time()
-        frame_element = queue_in.get()
+        try:
+            frame_element = frame_queue_in.get(timeout=10)
+        except Empty:
+            print("queue from camera is empty")
+            continue
+
         ts1 = time()
         frame_element = detection_node.process(frame_element)
         frame_element = tracker_info_update_node.process(frame_element)
