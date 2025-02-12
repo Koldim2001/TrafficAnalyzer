@@ -74,7 +74,6 @@ class VideoReader:
                 continue
 
             self.last_frame_timestamp = timestamp
-
             frame_number += 1
-
+            
             yield FrameElement(self.video_source, frame, timestamp, frame_number, self.roads_info)

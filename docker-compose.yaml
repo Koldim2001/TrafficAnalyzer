@@ -117,12 +117,26 @@ services:
     networks:
       - prod_network
 
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: traffic_mediamtx
+    restart: unless-stopped
+    ports:
+      - "1935:1935"  # RTMP
+      - "8554:8554"  # RTSP
+      - "8888:8888"  # HTTP (HLS, API, Prometheus)
+      - "8889:8889"  # HTTPS (HLS, API, Prometheus)
+    volumes:
+      - ./services/mediamtx/mediamtx.yml:/mediamtx.yml  # Конфигурационный файл
+    networks:
+      - prod_network
+
   traffic_analyzer_camera_1:
     build: .
     image: traffic_analyzer:latest 
     restart: always
     container_name: traffic_analyzer_camera_1
-    command: python main_optimized.py
+    command: python main.py
     environment:
       - VIDEO_SRC=test_videos/test_video.mp4
       - ROADS_JSON=configs/entry_exit_lanes.json
@@ -132,6 +146,8 @@ services:
       - ./configs:/app/configs
       - ./weights:/app/weights
       - ./test_videos:/app/test_videos
+      - ./nodes:/app/nodes
+      - ./main.py:/app/main.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -174,4 +190,4 @@ services:
 
 networks:
   prod_network:
-    driver: bridge
+    external: true

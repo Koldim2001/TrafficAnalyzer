@@ -15,6 +15,7 @@ pipeline:
   save_video : False  # Сохранение итогового видео обработки
   show_in_web: True  # Отображение результатов обработки видеопотока в веб-интерфейсе (Flask) вместо cv2.imshow
   send_info_kafka: True  # Отправлять ли инфо в кафку
+  streaming_rtmp: True # Делать ли стриминг RTMP результата
 
 #--------------------------------------------------GENERAL--------------------------------------------------
 
@@ -83,3 +84,10 @@ video_server_node:
   port: 8100  # На каком порту поднять
   template_folder: ../utils_local/templates  # Путь до templates (там где html файл)
   output_size : [800, 470]  # ресайз для отображения в flask
+
+streaming_node:
+  output_rtmp: rtmp://traffic_mediamtx:1935/output
+  fps: 12
+  height: 926
+  width: 1436 
+  encoder: libx264

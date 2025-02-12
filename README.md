@@ -20,6 +20,7 @@ GRAFANA_ADMIN_PASSWORD=admin
 ```
 Далее запустите проект с помощью этой команды:
 ```
+docker network create prod_network
 docker compose -p traffic_analyzer up -d --build
 ```
 
@@ -37,7 +38,7 @@ docker compose -p traffic_analyzer up -d --build
 python -m pip install --upgrade pip
 pip install "numpy<2"
 pip install cython_bbox==0.1.5 lap==0.4.0 
-pip install torch==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cu121
+pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 
 # запускаем код:
