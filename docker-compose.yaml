@@ -119,7 +119,7 @@ services:
 
   go2rtc:
     image: alexxit/go2rtc
-    container_name: go2rtc
+    container_name: traffic_go2rtc
     privileged: true # only for FFmpeg hardware transcoding
     ports:
       - 1984:1984
