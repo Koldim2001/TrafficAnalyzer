@@ -1,0 +1,5 @@
+streams:
+  camera_1: 
+   - 'rtmp://traffic_mediamtx:1935/output_1'
+  camera_2: 
+    - 'rtmp://traffic_mediamtx:1935/output_2'

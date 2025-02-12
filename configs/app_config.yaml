@@ -86,7 +86,7 @@ video_server_node:
   output_size : [800, 470]  # ресайз для отображения в flask
 
 streaming_node:
-  output_rtmp: rtmp://traffic_mediamtx:1935/output
+  output_rtmp: ${oc.env:RTMP}  #rtmp://traffic_mediamtx:1935/output_{n}
   fps: 12
   height: 926
   width: 1436 
