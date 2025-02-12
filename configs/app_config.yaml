@@ -13,7 +13,7 @@ hydra:
 
 pipeline:
   save_video : False  # Сохранение итогового видео обработки
-  show_in_web: True  # Отображение результатов обработки видеопотока в веб-интерфейсе (Flask) вместо cv2.imshow
+  show_in_web: False  # Отображение результатов обработки видеопотока в веб-интерфейсе (Flask) вместо cv2.imshow
   send_info_kafka: True  # Отправлять ли инфо в кафку
   streaming_rtmp: True # Делать ли стриминг RTMP результата
 
@@ -87,7 +87,7 @@ video_server_node:
 
 streaming_node:
   output_rtmp: ${oc.env:RTMP}  #rtmp://traffic_mediamtx:1935/output_{n}
-  fps: 12
-  height: 926
-  width: 1436 
-  encoder: libx264
+  fps: 15
+  height: 500
+  width: 750 
+  encoder: libx264  # libx264 - cpu  h264_nvenc - gpu

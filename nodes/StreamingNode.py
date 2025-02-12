@@ -2,8 +2,9 @@
 from torio.io import StreamingMediaEncoder as StreamWriter
 import torch
 import numpy as np
-import logging
+import time
 import cv2
+import logging
 
 from elements.VideoEndBreakElement import VideoEndBreakElement
 from elements.FrameElement import FrameElement
@@ -20,9 +21,11 @@ class StreamingNode:
         self.height = config_stream["height"]
         self.width = config_stream["width"]
         self.encoder = config_stream["encoder"]
+        self.last_send_time = None
 
-        assert self.encoder == 'libx264' or self.encoder == 'h265' # только CPU-кодеки
-        
+        encoder_format = 'yuv420p' if self.encoder == 'libx264' else 'rgb0' # формат пикселей зависит от кодека (gpu или cpu)
+        self.device = None if self.encoder == 'libx264' else 'cuda:0'       # выбираем девайс cuda для gpu-кодеков
+
         # Инициализируем стример из torio (torchaudio):
         self.stream_writer = StreamWriter(dst=self.output_rtmp, format="flv")
         
@@ -35,7 +38,8 @@ class StreamingNode:
             height=self.height, 
             width=self.width,
             encoder=self.encoder, 
-            encoder_format='yuv420p'
+            hw_accel=self.device, 
+            encoder_format=encoder_format,
         )
 
         # Open stream:
@@ -50,17 +54,34 @@ class StreamingNode:
             frame_element, FrameElement
         ), f"StreamingNode | Неправильный формат входного элемента {type(frame_element)}"
 
-        frame_result = frame_element.frame_result.copy()
-        frame_result = cv2.cvtColor(frame_result, cv2.COLOR_BGR2RGB) 
-
-        # numpy.array -> torch.tensor:
-        if isinstance(frame_result, np.ndarray):
-            img = torch.from_numpy(frame_result).permute(2, 0, 1).unsqueeze(0)
-        else:
-            assert False
+        current_time = time.time()
+        if frame_element.frame_num == 1:
+            self.last_send_time = current_time
         
-        # Подаем очередной кадр в стример:
-        self.stream_writer.write_video_chunk(0, img)
+        if current_time - self.last_send_time >= (1 / (self.fps * 2)):
+            frame_result = frame_element.frame_result.copy()
+            frame_result = cv2.cvtColor(frame_result, cv2.COLOR_BGR2RGB) 
+            frame_result = cv2.resize(frame_result, (self.width, self.height))
+
+            # numpy.array -> torch.tensor:
+            if isinstance(frame_result, np.ndarray):
+                img = torch.from_numpy(frame_result).permute(2, 0, 1).unsqueeze(0)
+            else:
+                assert False
+
+            #+ Перемещаем тензор на выбранный девайс (CPU или GPU):
+            if self.device is None:
+                img = img.to('cpu')
+            else:
+                img = img.to(self.device)
+            
+            # Подаем очередной кадр в стример:
+            try:
+                self.stream_writer.write_video_chunk(0, img)
+                logging.info(f"Frame was sent to streem {self.output_rtmp}")
+                self.last_send_time = current_time
+            except:
+                logging.error(f"FAILED sending frame to {self.output_rtmp}")
 
         return frame_element
 
