@@ -6,3 +6,4 @@ Flask==3.0.3
 tritonclient[all]==2.49.0
 tqdm==4.66.5
 scipy==1.14.0
+ultralytics==8.3.81
