@@ -99,7 +99,7 @@ def proc_show_node(queue_in: Queue, config: dict):
 
 @hydra.main(version_base=None, config_path="configs", config_name="app_config")
 def main(config) -> None:
-    time_sleep_start = 5
+    time_sleep_start = 15
 
     queue_frame_reader_and_detect_out = Queue(maxsize=50)
     queue_track_update_out = Queue(maxsize=50)

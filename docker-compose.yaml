@@ -17,6 +17,9 @@ services:
       - ./configs:/app/configs
       - ./weights:/app/weights
       - ./test_videos:/app/test_videos
+    depends_on:
+      triton:
+        condition: service_started
     networks:
       - prod_network
     env_file: 
@@ -36,6 +39,9 @@ services:
       - ./configs:/app/configs
       - ./weights:/app/weights
       - ./test_videos:/app/test_videos
+    depends_on:
+      triton:
+        condition: service_started
     networks:
       - prod_network
     env_file: 
@@ -54,17 +60,20 @@ services:
 
   triton:
     container_name: triton
-    build:
-      context: ./services/triton
-      dockerfile: Dockerfile
+    image: nvcr.io/nvidia/tritonserver:24.09-py3
+    ports:
+      - 8000:8000
+      - 8001:8001
+    restart: always
     volumes:
       - ./services/triton/models:/models
-    restart: always
+    command: ["tritonserver", "--model-store=/models"]
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
+              count: 1
     networks:
       - prod_network
 

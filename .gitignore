@@ -4,15 +4,15 @@ drafts
 logs
 test_videos/videos_extra
 **.engine
+**.profile
+**.pt
 videos_out
 test.ipynb
 myenv
 web.py
-**env**
 test.ipynb
 .env
 secrets.txt
 services/pg_data_wh
 services/grafana/alerting/1
 services/grafana/plugins
-services/triton/yolov8m.pt

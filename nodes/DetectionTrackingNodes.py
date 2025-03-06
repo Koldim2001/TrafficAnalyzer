@@ -7,21 +7,20 @@ from elements.VideoEndBreakElement import VideoEndBreakElement
 from byte_tracker.byte_tracker_model import BYTETracker as ByteTracker
 import tritonclient.grpc as grpcclient
 from utils_local.infer_triton_utils import infer_triton_yolo
+import ast
 
 
 class DetectionTrackingNodes:
     """Модуль инференса модели детекции + трекинг алгоритма"""
 
     def __init__(self, config) -> None:
-        #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        #print(f'Детекция будет производиться на {device}')
 
         config_yolo = config["detection_node"]
 
         self.triton_client_yolo = grpcclient.InferenceServerClient(url=config_yolo["triton_socket"])
         self.triton_model_name_yolo = config_yolo["triton_model_name"]
 
-        self.classes = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck"]
+        self.classes = self.get_trtion_yolo_classes_names(self.triton_client_yolo, self.triton_model_name_yolo)
         self.conf = config_yolo["confidence"]
         self.iou = config_yolo["iou"]
         self.imgsz = config_yolo["imgsz"]
@@ -109,3 +108,11 @@ class DetectionTrackingNodes:
                 detections_list.append(merged_detection)
 
         return np.array(detections_list)
+    
+    @staticmethod
+    def get_trtion_yolo_classes_names(triton_grpc_client, triton_model_name) -> list[str]:
+        model_config = triton_grpc_client.get_model_config(triton_model_name)
+        metadata_str = model_config.config.parameters["metadata"].string_value
+        anomaly_classes_names = ast.literal_eval(metadata_str)["names"]
+        anomaly_classes_names = list(anomaly_classes_names.values())
+        return anomaly_classes_names
